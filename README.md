@@ -1,5 +1,6 @@
-## Hi there 👋
+##👋 IRCopilot: Automated Incident Response with Large Language Models
 
+Source code for paper "IRCopilot: Automated Incident Response with Large Language Models", the code will be relased after the publication of the paper.
 <!--
 **IRCopilot/IRCopilot** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 

@@ -1,4 +1,4 @@
-##👋 IRCopilot: Automated Incident Response with Large Language Models
+# 👋 IRCopilot: Automated Incident Response with Large Language Models
 
 Source code for paper "IRCopilot: Automated Incident Response with Large Language Models", the code will be relased after the publication of the paper.
 <!--

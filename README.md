@@ -4,20 +4,20 @@ Source code for paper "IRCopilot: Automated Incident Response with Large Languag
 
 #### Benchmark
 
-| Target Name                      | Difficulty | os      | Number of Tasks | Source                                            |
+| Target Name                      | Difficulty | OS      | Number of Tasks | Source                                            |
 | -------------------------------- | ---------- | ------- | --------------- | ------------------------------------------------- |
-| Linux1                           | easy       | Linux   | 4               | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Linux2                           | hard       | Linux   | 8               | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Web1                             | easy       | windows | 4               | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Web2                             | medium     | windows | 7               | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Web3                             | medium     | windows | 6               | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Windows Miner                    | medium     | windows | 6               | https://pan.quark.cn/s/4b6dffd0c51a               |
-| VulnTarget-n-Ransomware          | medium     | linux   | 3               | https://xj.edisec.net/challenges/84               |
-| Windows Black Screen & Tampering | medium     | windows | 5               | https://xj.edisec.net/challenges/51               |
-| Memory Trojan Analysis - Nacos   | hard       | linux   | 4               | https://xj.edisec.net/challenges/34               |
-| Where 1S tHe Hacker              | hard       | windows | 10              | https://xj.edisec.net/challenges/63               |
-| Investigating Windows            | easy       | windows | 16              | https://tryhackme.com/r/room/investigatingwindows |
-| Tardigrade                       | medium     | linux   | 9               | https://tryhackme.com/r/room/tardigrade           |
+| Linux1                           | Easy       | Linux   | 4               | https://pan.quark.cn/s/4b6dffd0c51a               |
+| Linux2                           | Hard       | Linux   | 8               | https://pan.quark.cn/s/4b6dffd0c51a               |
+| Web1                             | Easy       | Windows | 4               | https://pan.quark.cn/s/4b6dffd0c51a               |
+| Web2                             | Medium     | Windows | 7               | https://pan.quark.cn/s/4b6dffd0c51a               |
+| Web3                             | Medium     | Windows | 6               | https://pan.quark.cn/s/4b6dffd0c51a               |
+| Windows Miner                    | Medium     | Windows | 6               | https://pan.quark.cn/s/4b6dffd0c51a               |
+| VulnTarget-n-Ransomware          | Medium     | Linux   | 3               | https://xj.edisec.net/challenges/84               |
+| Windows Black Screen & Tampering | Medium     | Windows | 5               | https://xj.edisec.net/challenges/51               |
+| Memory Trojan Analysis - Nacos   | Hard       | Linux   | 4               | https://xj.edisec.net/challenges/34               |
+| Where 1S tHe Hacker              | Hard       | Windows | 10              | https://xj.edisec.net/challenges/63               |
+| Investigating Windows            | Easy       | Windows | 16              | https://tryhackme.com/r/room/investigatingwindows |
+| Tardigrade                       | Medium     | Linux   | 9               | https://tryhackme.com/r/room/tardigrade           |
 |                                  |            |         |                 |                                                   |
 | Total                            |            |         | 82              |                                                   |
 

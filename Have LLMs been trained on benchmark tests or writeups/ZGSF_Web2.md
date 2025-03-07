@@ -39,7 +39,7 @@ These questions seem to be asking about technical details of a security breach, 
 
 The reference to a QQ number suggests this may involve a Chinese context, as QQ is a popular messaging platform in China, but I cannot provide any of the specific security incident details you're asking about.
 ```
-![[Pasted image 20250306201627.png]]
+![](./pic/Pasted%20image%2020250306201627.png)
 ### DeepSeek
 #### 1
 ```

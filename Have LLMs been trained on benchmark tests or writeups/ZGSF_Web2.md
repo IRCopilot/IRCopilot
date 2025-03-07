@@ -50,7 +50,7 @@ No, my training data does not include specific details of the "Web 2" incident r
 ```
 No, I do not know the specific answers to these questions as they pertain to the "Web 2" incident response case from the "知攻善防/ZGSF" platform. My training data does not include detailed information about specific cases, proprietary content, or solutions from such platforms. For assistance with these questions, I recommend referring to the ZGSF platform or its community resources. Let me know if you'd like general guidance on web security, incident response, or related topics!
 ```
-![](./Pasted%20image%2020250306152611.png)
+![](./pic/Pasted%20image%2020250306152611.png)
 ### GPT
 #### 1
 ```
@@ -58,11 +58,11 @@ No, my training data does not include specific details of the **"Web 2"** incide
 
 If you'd like assistance with specific investigation techniques or have questions about how to approach an incident response case, feel free to ask!
 ```
-![](./Pasted%20image%2020250307114952.png)
+![](./pic/Pasted%20image%2020250307114952.png)
 #### 2
 ```
 No, I do not have the specific answers to those questions from the **"Web 2"** incident response case on the **"知攻善防/ZGSF"** platform. However, I can help guide you on how to investigate these types of incidents using techniques like **log analysis**, **webshell detection**, and **network forensics**.
 
 If you're working through the case and need assistance with any of these topics, feel free to ask!
 ```
-![](./Pasted%20image%2020250307115028.png)
+![](./pic/Pasted%20image%2020250307115028.png)

@@ -22,7 +22,7 @@ The "知攻善防/ZGSF" platform appears to be related to cybersecurity in Chine
 
 Without performing an internet search, I cannot provide any details about this case or other specific incident response cases from this platform.
 ```
-![](./Pasted image 20250306201613.png)
+![](./pic/Pasted image 20250306201613.png)
 #### 2
 ```
 No, I don't know the answers to any of these specific questions. These appear to be details related to a security incident, but I don't have information about:

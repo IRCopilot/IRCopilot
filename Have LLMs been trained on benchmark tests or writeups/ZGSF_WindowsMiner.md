@@ -21,7 +21,7 @@ The term "挖矿" refers to cryptocurrency mining in Chinese, suggesting this ca
 
 Without performing an internet search, I cannot provide any details about this case or other specific incident response cases from this platform.
 ```
-![[Pasted image 20250306201819.png]]
+![1](./pic/Pasted%20image 20250306201819.png]]
 #### 2
 ```
 No, I don't know the answers to any of these specific questions. These appear to be details related to a cryptocurrency mining attack incident, but I don't have information about:
@@ -37,18 +37,18 @@ These questions seem to be asking about technical details of a security breach i
 
 Without additional context or information, I'm unable to provide answers to these specific technical questions about the incident.
 ```
-![[Pasted image 20250307112549.png]]
+![1](./pic/Pasted%20image%2020250307112549.png)
 ### DeepSeek
 #### 1
 ```
 No, my training data does not include specific details of the "挖矿" (mining) incident response case from the "知攻善防/ZGSF" platform. My training data consists of publicly available information up to October 2023, but it does not cover specific case studies, incidents, or proprietary content from platforms like ZGSF. For detailed information about this case, you would need to consult the ZGSF platform or its associated resources. Let me know if you'd like general information about cryptocurrency mining attacks, incident response, or related topics!
 ```
-![[Pasted image 20250306152747.png]]
+![1](./pic/Pasted%20image%2020250306152747.png)
 #### 2
 ```
 No, I do not know the specific answers to these questions as they pertain to the "挖矿" (mining) incident response case from the "知攻善防/ZGSF" platform. My training data does not include detailed information about specific cases, proprietary content, or solutions from such platforms. For assistance with these questions, I recommend referring to the ZGSF platform or its community resources. Let me know if you'd like general guidance on cryptocurrency mining attacks, incident response, or related topics!
 ```
-![[Pasted image 20250306152803.png]]
+![1](./pic/Pasted%20image%2020250306152803.png)
 ### GPT
 #### 1
 ```
@@ -56,11 +56,11 @@ No, my training data does not include specific details of the **"挖矿"** (mini
 
 Feel free to let me know if you need help with these topics!
 ```
-![[Pasted image 20250307115133.png]]
+![1](./pic/Pasted%20image%2020250307115133.png)
 #### 2
 ```
 No, I do not have the specific answers to those questions from the **"挖矿"** (mining) incident response case on the **"知攻善防/ZGSF"** platform. However, I can guide you on how to investigate these types of questions using techniques like **log analysis**, **file integrity checks**, and **network forensics** to uncover mining activities, identify backdoor scripts, and track attacker actions.
 
 Let me know if you'd like assistance with these investigative methods!
 ```
-![[Pasted image 20250307115211.png]]
+![1](./pic/Pasted%20image%2020250307115211.png)

@@ -19,7 +19,7 @@ My training data included a wide variety of publicly available text from the int
 
 If you're researching this specific incident or platform, you might want to consult specialized cybersecurity resources or documentation related to the Xuanji platform directly.
 ```
-![[Pasted image 20250306143150.png]]
+![1](./pic/Pasted%20image%2020250306143150.png)
 #### 2
 ```
 I don't have specific information about this particular attack in my training data, so I cannot provide accurate answers to these questions. Without knowing the details of:
@@ -40,26 +40,26 @@ If you're working on a cybersecurity exercise or challenge, I'd recommend:
 
 I can help with general ransomware recovery concepts or web service restoration principles if that would be useful, but I can't provide specific answers to these scenario-based questions without the relevant context.
 ```
-![[Pasted image 20250306143201.png]]
+![1](./pic/Pasted%20image%2020250306143201.png)
 ### DeepSeek
 #### 1
 ```
 No, my training data does not include specific details of the "Incident Response-vulntarget-n-Ransomware/应急响应-vulntarget-n-勒索病毒" incident response case from the "Xuanji/玄机" platform. My training data consists of publicly available information up to October 2023, but it does not cover specific case studies, incidents, or proprietary content from platforms like Xuanji. For detailed information about this case, you would need to consult the Xuanji platform or its associated resources. Let me know if you'd like general information about ransomware, incident response, or related topics!
 ```
-![[Pasted image 20250306151702.png]]
+![1](./pic/Pasted%20image%2020250306151702.png)
 #### 2
 ```
 No, I do not know the specific answers to these questions as they pertain to the "Incident Response-vulntarget-n-Ransomware/应急响应-vulntarget-n-勒索病毒" case from the "Xuanji/玄机" platform. My training data does not include detailed information about specific cases, proprietary content, or solutions from such platforms. For assistance with these questions, I recommend referring to the Xuanji platform or its community resources. Let me know if you'd like general guidance on ransomware analysis, incident response, or related topics!
 ```
-![[Pasted image 20250306151735.png]]
+![1](./pic/Pasted%20image%2020250306151735.png)
 ### GPT
 #### 1
 ```
 No, my training data does not include specific details of the **"Incident Response-vulntarget-n-Ransomware" (应急响应-vulntarget-n-勒索病毒)** case from the **Xuanji (玄机)** platform. However, I can provide guidance on general **ransomware incident response, forensic analysis, and mitigation strategies** if you're working through the challenge. Let me know how I can assist!
 ```
-![[Pasted image 20250307114608.png]]
+![1](./pic/Pasted%20image%2020250307114608.png)
 #### 2
 ```
 No, I do not have the specific answers to those questions from the **"Incident Response-vulntarget-n-Ransomware" (应急响应-vulntarget-n-勒索病毒)** case on the **Xuanji (玄机)** platform. However, I can guide you on how to approach each of these tasks, including **attack analysis, ransomware decryption techniques, web service restoration, and flag hunting** if you're working through the challenge. Let me know if you need help with forensic methods or investigation strategies!
 ```
-![[Pasted image 20250307114617.png]]
+![1](./pic/Pasted%20image%2020250307114617.png)

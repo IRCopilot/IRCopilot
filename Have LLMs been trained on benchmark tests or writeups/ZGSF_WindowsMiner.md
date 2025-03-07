@@ -21,7 +21,7 @@ The term "挖矿" refers to cryptocurrency mining in Chinese, suggesting this ca
 
 Without performing an internet search, I cannot provide any details about this case or other specific incident response cases from this platform.
 ```
-![1](./pic/Pasted%20image 20250306201819.png]]
+![1](./pic/Pasted%20image%2020250306201819.png]]
 #### 2
 ```
 No, I don't know the answers to any of these specific questions. These appear to be details related to a cryptocurrency mining attack incident, but I don't have information about:

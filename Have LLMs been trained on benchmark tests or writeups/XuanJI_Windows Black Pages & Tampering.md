@@ -21,7 +21,7 @@ My knowledge cutoff is October 2024, but I don't recall information about this p
 
 Without performing an internet search, I can't provide confirmed information about this specific incident or the "Xuanji/玄机" platform. If you have more information about this case that you'd like to discuss, I'd be happy to help based on the information you provide.
 ```
-![[Pasted image 20250306143643.png]]
+![1](./pic/Pasted%20image%2020250306143643.png)
 #### 2
 ```
 I don't have specific knowledge about which of these URLs represents a "tampered location" in what appears to be a local development or testing environment using DedeCMS (a Chinese content management system).
@@ -32,26 +32,26 @@ These appear to be local development URLs (using the 127.0.0.1 localhost address
 
 If you're working on a specific security exercise or incident analysis and need assistance, I'd need more information about what you're looking for or what indicators of tampering might be relevant.
 ```
-![[Pasted image 20250306143504.png]]
+![1](./pic/Pasted%20image%2020250306143504.png)
 ### DeepSeek
 #### 1
 ```
 No, my training data does not include specific details of the "Windows Practice - Black Pages && Tampering / windows实战--黑页&&篡改" incident response case from the "Xuanji/玄机" platform. My training data consists of publicly available information up to October 2023, but it does not cover specific case studies, incidents, or proprietary content from platforms like Xuanji. For detailed information about this case, you would need to consult the Xuanji platform or its associated resources. Let me know if you'd like general information about Windows incident response, forensic analysis, or related topics!
 ```
-![[Pasted image 20250306152107.png]]
+![1](./pic/Pasted%20image%2020250306152107.png)
 #### 2
 ```
 No, I do not know the specific answers to these questions as they pertain to the "Windows Practice - Black Pages && Tampering / windows实战--黑页&&篡改" incident response case from the "Xuanji/玄机" platform. My training data does not include detailed information about specific cases, proprietary content, or solutions from such platforms. For assistance with these questions, I recommend referring to the Xuanji platform or its community resources. Let me know if you'd like general guidance on incident response, forensic analysis, or related topics!
 ```
-![[Pasted image 20250306152142.png]]
+![1](./pic/Pasted%20image%2020250306152142.png)
 ### GPT
 #### 1
 ```
 No, my training data does not include specific details of the **"Windows Practice - Black Pages && Tampering" (windows实战--黑页&&篡改)** incident response case from the **Xuanji (玄机)** platform. However, I can assist you with general **incident response strategies, Windows security practices, and tampering detection techniques** if you're working through the case. Let me know if you'd like guidance on specific topics or steps involved!
 ```
-![[Pasted image 20250307114713.png]]
+![1](./pic/Pasted%20image%2020250307114713.png)
 #### 2
 ```
 No, I do not have the specific answers to the tampered locations listed in the **"Windows Practice - Black Pages && Tampering"** case from the **Xuanji (玄机)** platform. However, based on the provided URLs, it seems that you are dealing with a scenario involving web application tampering, potentially targeting **a CMS (Content Management System)** like **Dedecms**.
 ```
-![[Pasted image 20250307114734.png]]
+![1](./pic/Pasted%20image%2020250307114734.png)

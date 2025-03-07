@@ -25,7 +25,7 @@ Without performing an internet search, I can't provide any confirmed information
 
 If you'd like to share more information about this case, I'd be happy to discuss it based on the information you provide, but I can't independently recall specific details about it.
 ```
-![[Pasted image 20250306143452.png]]
+![1](./pic/Pasted%20image%2020250306143452.png)
 #### 2
 ```
 I don't have specific answers to these questions in my knowledge base. These appear to be related to a specific hacking incident or perhaps a cybersecurity exercise/CTF challenge, but I don't have the details about:
@@ -44,27 +44,27 @@ These questions seem to be asking for forensic analysis details from a specific 
 
 If you're working on a cybersecurity exercise or challenge and need assistance with how to approach finding these answers (rather than the specific answers themselves), I'd be happy to discuss general forensic investigation techniques that might help you discover this information.
 ```
-![[Pasted image 20250306143803.png]]
+![1](./pic/Pasted%20image%2020250306143803.png)
 
 ### DeepSeek
 #### 1
 ```
 No, my training data does not include specific details of the "Where-1S-tHe-Hacker" incident response case from the "Xuanji/玄机" platform. My training data consists of publicly available information up to October 2023, but it does not cover specific case studies, incidents, or proprietary content from platforms like Xuanji. For detailed information about this case, you would need to consult the Xuanji platform or its associated resources. Let me know if you'd like general information about incident response or related topics!
 ```
-![[Pasted image 20250306151822.png]]
+![1](./pic/Pasted%20image%2020250306151822.png)
 #### 2
 ```
 No, I do not know the specific answers to these questions as they pertain to the "Where-1S-tHe-Hacker" incident response case from the "Xuanji/玄机" platform. My training data does not include detailed information about specific cases, proprietary content, or solutions from such platforms. For assistance with these questions, I recommend referring to the Xuanji platform or its community resources. Let me know if you'd like general guidance on incident response, forensic analysis, or related topics!
 ```
-![[Pasted image 20250306152023.png]]
+![1](./pic/Pasted%20image%2020250306152023.png)
 ### GPT
 #### 1
 ```
 No, my training data does not include specific details of the **"Where-1S-tHe-Hacker"** incident response case from the **Xuanji (玄机)** platform. However, I can help with **general incident response methodologies, attacker tracking techniques, and forensic analysis** if you're working through the challenge. Let me know how I can assist!
 ```
-![[Pasted image 20250307114634.png]]
+![1](./pic/Pasted%20image%2020250307114634.png)
 #### 2
 ```
 No, I do not have the specific answers to those questions from the **"Where-1S-tHe-Hacker"** incident response case on the **Xuanji (玄机)** platform. However, I can guide you on how to investigate and extract this information using **log analysis, forensic techniques, webshell detection, account auditing, and pass-the-hash (PTH) attack analysis** if you're working through the challenge. Let me know how I can assist!
 ```
-![[Pasted image 20250307114655.png]]
+![1](./pic/Pasted%20image%2020250307114655.png)

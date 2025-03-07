@@ -28,7 +28,7 @@ Do you know the answers to the following questions for the detail case "Investig
 ```
 I do not have specific details about the "Investigating Windows" incident response case from TryHackMe in my training data. While I have general knowledge about cybersecurity, incident response, and Windows forensics, I cannot confidently recall the specific details of this particular case or challenge. If you're interested in discussing the case, I'd be happy to hear more about it from you and provide insights based on my general understanding of digital forensics and incident response principles.
 ```
-![[Pasted image 20250305154801.png]]
+![1](./pic/Pasted%20image%2020250305154801.png)
 #### 2
 ```
 I apologize, but I cannot definitively confirm the specific answers to these questions about the "Investigating Windows" TryHackMe incident response case. While I understand these appear to be specific challenge questions from a cybersecurity training scenario, I do not have the precise details in my training data.
@@ -47,7 +47,7 @@ The questions seem to be part of a forensic investigation scenario involving a c
 
 If you're working through this challenge, I'd be happy to provide general guidance on how to approach incident response and forensic investigation techniques to help you find these answers systematically. Would you like me to discuss some general strategies for investigating a potentially compromised Windows system?
 ```
-![[Pasted image 20250305154836.png]]
+![1](./pic/Pasted%20image%2020250305154836.png)
 ### DeepSeek
 #### 1
 ```
@@ -55,22 +55,22 @@ My training data includes a wide range of publicly available information up to O
 
 If you have questions about incident response or Windows forensics, feel free to ask, and I can provide general guidance or insights based on my training!
 ```
-![[Pasted image 20250306150711.png]]
+![1](./pic/Pasted%20image%2020250306150711.png)
 #### 2
 ```
 The questions you've provided appear to be part of a specific incident response or forensic investigation scenario, likely from a platform like TryHackMe or a similar cybersecurity training environment. Since I don't have access to specific case studies, proprietary content, or the exact details of this scenario, I cannot provide direct answers to these questions.
 ```
-![[Pasted image 20250306151041.png]]
+![1](./pic/Pasted%20image%2020250306151041.png)
 ### GPT
 #### 1
 ```
 No, my training data does not include specific details of the _Investigating Windows_ incident response case from _TryHackMe_. However, I can discuss general principles of Windows forensic investigations, common attack techniques, and incident response methodologies. Let me know how I can help!
 ```
-![[Pasted image 20250307114346.png]]
+![1](./pic/Pasted%20image%2020250307114346.png)
 #### 2
 ```
 I don’t have the specific answers to the _Investigating Windows_ case on TryHackMe. However, I can guide you on how to find them using forensic techniques, Windows event logs, and incident response methods.
 
 Would you like assistance in analyzing event logs, checking user activity, or identifying malicious activity? Let me know how I can help!
 ```
-![[Pasted image 20250307114359.png]]
+![1](./pic/Pasted%20image%2020250307114359.png)

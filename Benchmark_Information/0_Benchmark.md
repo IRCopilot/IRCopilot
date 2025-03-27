@@ -29,6 +29,7 @@
 |               | Vulnerability Patching                   | Apply patches to fix vulnerabilities and prevent recurrence of attacks.                                                       |
 |               | Other Recoveries                         | Additional recovery methods, such as network recovery and permission reset, to address various aspects of system restoration. |
 #### benchmark info
+Click on the target name to get the sub-task list
 |     | Target Name                                                                                                            | Difficulty | OS      | Number of Tasks | Source                                            |
 | --- | ---------------------------------------------------------------------------------------------------------------------- | ---------- | ------- | --------------- | ------------------------------------------------- |
 | 1   | [Investigating Windows](./1_TryHackMe_InvestigatingWindows%20(Easy).md)                          | Easy       | Windows | 22              | https://tryhackme.com/r/room/investigatingwindows |

@@ -2,8 +2,8 @@
 
 Source code for paper "IRCopilot: Automated Incident Response with Large Language Models", the code will be relased after the publication of the paper.
 
-#### Benchmark
-##### [benchmark info](./Benchmark_Information/)
+### Benchmark
+#### [benchmark info](./Benchmark_Information/)
 Click on the target name to get the sub-task list
 |     | Target Name                                                                                                            | Difficulty | OS      | Number of Tasks | Source                                            |
 | --- | ---------------------------------------------------------------------------------------------------------------------- | ---------- | ------- | --------------- | ------------------------------------------------- |
@@ -22,7 +22,7 @@ Click on the target name to get the sub-task list
 |     |                                                                                                                        |            |         |                 |                                                   |
 |     | Total                                                                                                                  |            |         | 130             |                                                   |
 
-##### Summarized 27 Types of Sub-tasks in the Proposed Incident Response Benchmark
+#### Summarized 27 Types of Sub-tasks in the Proposed Incident Response Benchmark
 | **Phase**     | **Technique**                            | **Description**                                                                                                               |
 | ------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | **Detection** | System Information Gathering             | Includes operating system identification, network configuration analysis, hardware information gathering, etc.                |
@@ -53,7 +53,7 @@ Click on the target name to get the sub-task list
 |               | Vulnerability Patching                   | Apply patches to fix vulnerabilities and prevent recurrence of attacks.                                                       |
 |               | Other Recoveries                         | Additional recovery methods, such as network recovery and permission reset, to address various aspects of system restoration. |
 
-
+#### Data Contamination Mitigation.[Have LLMs been trained on benchmark tests or writeups](./Have%20LLMs%20been%20trained%20on%20benchmark%20tests%20or%20writeups)
 
 
 <!--

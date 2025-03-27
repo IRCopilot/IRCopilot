@@ -6,7 +6,7 @@ Source code for paper "IRCopilot: Automated Incident Response with Large Languag
 ##### benchmark info
 | Target Name                     | Difficulty | OS      | Number of Tasks | Source                                            |
 | ------------------------------- | ---------- | ------- | --------------- | ------------------------------------------------- |
-| [Investigating Windows](./Benchmark_Information/1_TryHackMe_InvestigatingWindows.md)           | Easy       | Windows | 22              | https://tryhackme.com/r/room/investigatingwindows |
+| [Investigating Windows](./Benchmark_Information/1_TryHackMe_InvestigatingWindows%20(Easy).md)           | Easy       | Windows | 22              | https://tryhackme.com/r/room/investigatingwindows |
 | Linux1                          | Easy       | Linux   | 7               | https://pan.quark.cn/s/4b6dffd0c51a               |
 | Web1                            | Easy       | Windows | 7               | https://pan.quark.cn/s/4b6dffd0c51a               |
 | Tardigrade                      | Medium     | Linux   | 15              | https://tryhackme.com/r/room/tardigrade           |

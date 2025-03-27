@@ -45,7 +45,7 @@ Source code for paper "IRCopilot: Automated Incident Response with Large Languag
 |               | Network Traffic Analysis                 | Analyze network traffic to identify suspicious communication or data exfiltration.                                            |
 |               | Risky IP Management                      | Block or monitor traffic from known malicious or suspicious IP addresses.                                                     |
 |               | Database Analysis                        | Analyze databases for security vulnerabilities, data leaks, or unauthorized access.                                           |
-|               | Other Response                           | Conduct additional response activities, such as analyzing virtualization environments or reviewing container security.        |
+|               | Other Responses                          | Conduct additional response activities, such as analyzing virtualization environments or reviewing container security.        |
 | **Recovery**  | System Recovery                          | Restore the system to a stable state after failures, malware, or misconfigurations.                                           |
 |               | Data Recovery                            | Recover lost or corrupted data from backups or damaged media.                                                                 |
 |               | Service Recovery                         | Restore key services and applications to minimize downtime.                                                                   |

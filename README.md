@@ -3,7 +3,8 @@
 Source code for paper "IRCopilot: Automated Incident Response with Large Language Models", the code will be relased after the publication of the paper.
 
 #### Benchmark
-##### benchmark info
+##### [benchmark info](./Benchmark_Information/)
+Click on the target name to get the sub-task list
 | Target Name                                                                                                            | Difficulty | OS      | Number of Tasks | Source                                            |
 | ---------------------------------------------------------------------------------------------------------------------- | ---------- | ------- | --------------- | ------------------------------------------------- |
 | [Investigating Windows](./Benchmark_Information/1_TryHackMe_InvestigatingWindows%20(Easy).md)                          | Easy       | Windows | 22              | https://tryhackme.com/r/room/investigatingwindows |

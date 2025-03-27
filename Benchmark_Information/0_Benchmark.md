@@ -29,20 +29,19 @@
 |               | Vulnerability Patching                   | Apply patches to fix vulnerabilities and prevent recurrence of attacks.                                                       |
 |               | Other Recoveries                         | Additional recovery methods, such as network recovery and permission reset, to address various aspects of system restoration. |
 #### benchmark info
-| Target Name                     | Difficulty | OS      | Number of Tasks | Source                                            |
-| ------------------------------- | ---------- | ------- | --------------- | ------------------------------------------------- |
-| Investigating Windows           | Easy       | Windows | 22              | https://tryhackme.com/r/room/investigatingwindows |
-| Linux1                          | Easy       | Linux   | 7               | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Web1                            | Easy       | Windows | 7               | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Tardigrade                      | Medium     | Linux   | 15              | https://tryhackme.com/r/room/tardigrade           |
-| VulnTarget-n-Ransomware         | Medium     | Linux   | 6               | https://xj.edisec.net/challenges/84               |
-| Web2                            | Medium     | Windows | 11              | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Web3                            | Medium     | Windows | 11              | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Windows Black Pages & Tampering | Medium     | Windows | 10              | https://xj.edisec.net/challenges/51               |
-| Windows Miner                   | Medium     | Windows | 9               | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Linux2                          | Hard       | Linux   | 11              | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Memory Trojan Analysis - Nacos  | Hard       | Linux   | 6               | https://xj.edisec.net/challenges/34               |
-| Where 1S tHe Hacker             | Hard       | Windows | 15              | https://xj.edisec.net/challenges/63               |
-|                                 |            |         |                 |                                                   |
-| Total                           |            |         | 130             |                                                   |
-
+|     | Target Name                                                                                                            | Difficulty | OS      | Number of Tasks | Source                                            |
+| --- | ---------------------------------------------------------------------------------------------------------------------- | ---------- | ------- | --------------- | ------------------------------------------------- |
+| 1   | [Investigating Windows](./1_TryHackMe_InvestigatingWindows%20(Easy).md)                          | Easy       | Windows | 22              | https://tryhackme.com/r/room/investigatingwindows |
+| 2   | [Linux1](./2_ZGSF_Linux1%20(Easy))                                                               | Easy       | Linux   | 7               | https://pan.quark.cn/s/4b6dffd0c51a               |
+| 3   | [Web1](./3_ZGSF_Web1%20(Easy))                                                                   | Easy       | Windows | 7               | https://pan.quark.cn/s/4b6dffd0c51a               |
+| 4   | [Tardigrade](./4_TryHackMe_Tardigrade%20(Medium))                                                | Medium     | Linux   | 15              | https://tryhackme.com/r/room/tardigrade           |
+| 5   | [VulnTarget-n-Ransomware](./5_XuanJI_VulnTarget-n-Ransomware%20(Medium))                         | Medium     | Linux   | 6               | https://xj.edisec.net/challenges/84               |
+| 6   | [Web2](./6_ZGSF_Web2%20(Medium))                                                                 | Medium     | Windows | 11              | https://pan.quark.cn/s/4b6dffd0c51a               |
+| 7   | [Web3](./7_ZGSF_Web3%20(Medium))                                                                 | Medium     | Windows | 11              | https://pan.quark.cn/s/4b6dffd0c51a               |
+| 8   | [Windows Black Pages & Tampering](./8_XuanJI_Windows%20Black%20Pages%20&%20Tampering%20(medium)) | Medium     | Windows | 10              | https://xj.edisec.net/challenges/51               |
+| 9   | [Windows Miner](.9_ZGSF_WindowsMiner%20(Medium))                                                | Medium     | Windows | 9               | https://pan.quark.cn/s/4b6dffd0c51a               |
+| 10  | [Linux2](./10_ZGSF_Linux2%20(Hard))                                                              | Hard       | Linux   | 11              | https://pan.quark.cn/s/4b6dffd0c51a               |
+| 11  | [Memory Trojan Analysis - Nacos](./11_XuanJI_Nacos%20(hard))                                     | Hard       | Linux   | 6               | https://xj.edisec.net/challenges/34               |
+| 12  | [Where 1S tHe Hacker](./12_XuanJI_Where-1S-tHe-Hacker%20(hard))                                  | Hard       | Windows | 15              | https://xj.edisec.net/challenges/63               |
+|     |                                                                                                                        |            |         |                 |                                                   |
+|     | Total                                                                                                                  |            |         | 130             |                                                   |

@@ -4,22 +4,22 @@ Source code for paper "IRCopilot: Automated Incident Response with Large Languag
 
 #### Benchmark
 ##### benchmark info
-| Target Name                     | Difficulty | OS      | Number of Tasks |     | Source                                            |
-| ------------------------------- | ---------- | ------- | --------------- | --- | ------------------------------------------------- |
-| Investigating Windows           | Easy       | Windows | 22              |     | https://tryhackme.com/r/room/investigatingwindows |
-| Linux1                          | Easy       | Linux   | 7               |     | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Web1                            | Easy       | Windows | 7               |     | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Tardigrade                      | Medium     | Linux   | 15              |     | https://tryhackme.com/r/room/tardigrade           |
-| VulnTarget-n-Ransomware         | Medium     | Linux   | 6               |     | https://xj.edisec.net/challenges/84               |
-| Web2                            | Medium     | Windows | 11              |     | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Web3                            | Medium     | Windows | 11              |     | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Windows Black Pages & Tampering | Medium     | Windows | 10              |     | https://xj.edisec.net/challenges/51               |
-| Windows Miner                   | Medium     | Windows | 9               |     | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Linux2                          | Hard       | Linux   | 11              |     | https://pan.quark.cn/s/4b6dffd0c51a               |
-| Memory Trojan Analysis - Nacos  | Hard       | Linux   | 6               |     | https://xj.edisec.net/challenges/34               |
-| Where 1S tHe Hacker             | Hard       | Windows | 15              |     | https://xj.edisec.net/challenges/63               |
-|                                 |            |         |                 |     |                                                   |
-| Total                           |            |         | 130             |     |                                                   |
+| Target Name                     | Difficulty | OS      | Number of Tasks | Source                                            |
+| ------------------------------- | ---------- | ------- | --------------- | ------------------------------------------------- |
+| [Investigating Windows](./Benchmark_Information/1_TryHackMe_InvestigatingWindows.md)           | Easy       | Windows | 22              | https://tryhackme.com/r/room/investigatingwindows |
+| Linux1                          | Easy       | Linux   | 7               | https://pan.quark.cn/s/4b6dffd0c51a               |
+| Web1                            | Easy       | Windows | 7               | https://pan.quark.cn/s/4b6dffd0c51a               |
+| Tardigrade                      | Medium     | Linux   | 15              | https://tryhackme.com/r/room/tardigrade           |
+| VulnTarget-n-Ransomware         | Medium     | Linux   | 6               | https://xj.edisec.net/challenges/84               |
+| Web2                            | Medium     | Windows | 11              | https://pan.quark.cn/s/4b6dffd0c51a               |
+| Web3                            | Medium     | Windows | 11              | https://pan.quark.cn/s/4b6dffd0c51a               |
+| Windows Black Pages & Tampering | Medium     | Windows | 10              | https://xj.edisec.net/challenges/51               |
+| Windows Miner                   | Medium     | Windows | 9               | https://pan.quark.cn/s/4b6dffd0c51a               |
+| Linux2                          | Hard       | Linux   | 11              | https://pan.quark.cn/s/4b6dffd0c51a               |
+| Memory Trojan Analysis - Nacos  | Hard       | Linux   | 6               | https://xj.edisec.net/challenges/34               |
+| Where 1S tHe Hacker             | Hard       | Windows | 15              | https://xj.edisec.net/challenges/63               |
+|                                 |            |         |                 |                                                   |
+| Total                           |            |         | 130             |                                                   |
 
 ##### Summarized 27 Types of Sub-tasks in the Proposed Incident Response Benchmark
 | **Phase**     | **Technique**                            | **Description**                                                                                                               |

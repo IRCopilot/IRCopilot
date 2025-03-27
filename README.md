@@ -53,7 +53,7 @@ Click on the target name to get the sub-task list
 |               | Vulnerability Patching                   | Apply patches to fix vulnerabilities and prevent recurrence of attacks.                                                       |
 |               | Other Recoveries                         | Additional recovery methods, such as network recovery and permission reset, to address various aspects of system restoration. |
 
-#### Data Contamination Mitigation.[Have LLMs been trained on benchmark tests or writeups](./Have%20LLMs%20been%20trained%20on%20benchmark%20tests%20or%20writeups)
+#### Data Contamination Mitigation. [Have LLMs been trained on benchmark tests or writeups?](./Have%20LLMs%20been%20trained%20on%20benchmark%20tests%20or%20writeups)
 
 
 <!--

@@ -34,8 +34,8 @@ Here are two examples of IRT templates generated in different scenarios:
 Scenario 1: If the tasks provided by the security analyst are clear (e.g., needing to retrieve specific information using a certain method), just execute "1. Incident Response Goal" in order without adding extra tasks:
 ```
 1. Incident Response Objectives (linux) - [To-do]
-    1.1 Server OS version - (Ubuntu 20.04.4 LTS)
-    1.2 Sensitive files in giorgio's home directory - (.bad_bash)
+    1.1 Server OS version - (To-do)
+    1.2 Sensitive files in giorgio's home directory - (To-do)
     1.3 Sensitive content in giorgio's .bashrc - (To-do)
     1.4 Sensitive content in giorgio's cron jobs - (To-do)     
     1.5 Error message returned when logging into root user terminal - (To-do)
@@ -48,14 +48,14 @@ Scenario 1: If the tasks provided by the security analyst are clear (e.g., needi
 Scenario 2: If the security analyst has not provided clear task information (**as long as there is a "flag field" in the task**), further investigation is needed, and "2. Intrusion Investigation" can be added:
 ```
 1. Incident Response Objectives (linux) - [To-do]
-    1.1 Attacker IP - (192.168.20.1)
-    1.2 Modified plaintext admin password - (Network@2020)
-    1.3 First Webshell connection URL - (index.php?user-app-register)
+    1.1 Attacker IP - (...)
+    1.2 Modified plaintext admin password - (...)
+    1.3 First Webshell connection URL - (...)
     1.4 Webshell connection password - (To-do)
     1.5 Trojan file uploaded later - (To-do)
     1.6 flag1 - (To-do)
-    1.7 flag2 - (flag{bL5Frin6JVwVw7tJBdqXlHCMVpAenXI9In9})
-    1.8 flag3 - (flag{5LourqoFt5d2zyOVUoVPJbOmeVmoKgcy6OZ})
+    1.7 flag2 - (flag{...})
+    1.8 flag3 - (flag{...})
 2. Incident Response Procedures - [To-do]
     2.1 Review Command History - (Completed)
     2.2 Investigate Sensitive Directories - (To-do)
@@ -70,7 +70,7 @@ Scenario 2: If the security analyst has not provided clear task information (**a
         2.5.3 Investigate Cron Jobs - (To-do)
     2.6 Check Account Security - (To-do)
         Results:
-        - Suspicious account: xxx
+        - Suspicious account: ...
     2.7 Investigate Suspicious Files - (To-do)
         2.7.1 Check Modified Files - (To-do)
     2.8 Check Database Content - (To-do)
@@ -81,8 +81,8 @@ Scenario 2: If the security analyst has not provided clear task information (**a
 (1). If the tasks provided by the security analyst are clear (e.g., retrieving something using a specific method), place these tasks under "1. Incident Response Objectives", starting from the following IRT:
 ```
 1. Incident Response Objectives (linux/windows) - [To-do]
-    1.1 xxx - (To-do)
-    1.2 xxx - (To-do)
+    1.1 ... - (To-do)
+    1.2 ... - (To-do)
 ```
 
 (2). If the security analyst has not provided clear task information (**whenever a "flag field" exists in the task**), further investigation is required. Add "2. Intrusion Investigation" starting from the following IRT:
@@ -207,8 +207,8 @@ Based on the listed log files, we can see the "secure" log file, which typically
 
 1. Incident Response Objectives - [To-do]
     1.1 Hacker's IP address - (To-do)
-    1.2 Flag 1 - (flag{thisismybaby})
-    1.3 Flag 2 - (flag{kfcvme50})
+    1.2 Flag 1 - (flag{...})
+    1.3 Flag 2 - (flag{...})
     1.4 Flag 3 - (To-do)
 2. Incident Response Procedures - [To-do]
     2.1 Review Command History - (Completed)

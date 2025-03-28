@@ -54,6 +54,10 @@ Click on the target name to get the sub-task list
 |               | Other Recoveries                         | Additional recovery methods, such as network recovery and permission reset, to address various aspects of system restoration. |
 
 #### Data Contamination Mitigation. [Have LLMs been trained on benchmark tests or writeups?](./Have%20LLMs%20been%20trained%20on%20benchmark%20tests%20or%20writeups)
+IRCopilot is built based on LLMs, recognizing that cases or writeups on these platforms may already be included in LLM training data, which can potentially bias experimental results. To address concerns about data contamination in LLMs/IRCopilot, we implement three measures. First, we verify whether the LLMs had undergone targeted training by directly querying them for detailed information about specific cases, and we publish the relevant content on our Anonymous Github. Second, during the benchmark selection process, we prioritize cases with more recent publication dates, which are most likely to fall outside the scope of the LLMs’ training data. Finally, since IRCopilot has the ability to display each step of its reasoning process, we confirm through an examination of its reasoning paths that it lacks prior knowledge of the cases. Furthermore, real-world cases in practicality study further demonstrated that, even without targeted training, IRCopilot shows significant feasibility and effectiveness in real-world applications.
+
+### Prompt
+[Prompt of IRCopilot](./prompt_class_IRCopilot_en.py), and the code will be relased after the publication of the paper.
 
 
 <!--

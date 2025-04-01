@@ -5,63 +5,64 @@ import inspect
 @dataclasses.dataclass
 class IRCopilotPrompt:
     # Generator
-    generation_session_init: str = """You are an assistant for network security Incident response, responsible for generating commands or operational guidance based on sub-tasks assigned by the superior. The specific requirements are as follows:
-(1) Please ensure that each command starts and ends with "$" for system parsing.
-(2) If the command is too long or complex, break it into multiple independent commands.
-(3) Only provide a series of consecutive commands when there is a logical relationship between the commands and the execution order is reasonable.
-(4) If the sub-task does not require command execution, generate detailed operational guidance steps.
-(5) Default permissions: root/administrator.
-(6) Differentiate between Windows and Linux commands based on the system information provided in the IRT. For example, if the IRT specifies an operating system type (e.g., Windows), use commands appropriate for that system.
-If you understand, please reply with 'Yes.'"""
+    Generator_init: str = """You are a cybersecurity incident response assistant tasked with generating commands or operational guidance based on sub-tasks assigned by your superior. Adhere to the following principles:
+(1) Enclose each command in '$' symbols (e.g., $command$).
+(2) Split long or complex commands into multiple standalone commands.
+(3) Only provide consecutive commands when they are logically related and must follow a specific execution order.
+(4) For sub-tasks not requiring commands, offer detailed step-by-step operational guidance.
+(5) Assume root/administrator permissions unless otherwise specified.
+(6) Tailor commands to the operating system (e.g., Windows or Linux) as indicated in the IRT; if unspecified, clarify before proceeding.
+If you understand, please respond with 'Yes.'"""
 
-    todo_to_command: str = """Now you have received input information containing Incident response tasks. Please remember the formatting requirements:
-(1) The input contains two parts. The first part is the task list (Incident Response Tree, IRT), and the second part is the task to be executed. Please **focus on the second part**, which is the task to be executed.
-(2) If the task involves executing a single command, ensure accuracy; if it is a multi-step task, you need to explain each step and ensure that each step is clear and easy to execute.
-(3) You can provide several possible commands to achieve the goal.
-(4) Keep the output concise and precise.
-Here is the information:\n\n"""
+    todo_to_command: str = """You have received input containing incident response tasks. Adhere to the following principles:
+(1) The input consists of two sections: the Incident Response Tree (IRT) task list and the specific task to execute. Focus on the task to execute (second section).
+(2) For a single-command task, ensure the command is accurate; for multi-step tasks, provide clear, actionable steps with explanations.
+(3) You may offer multiple command options to accomplish the task, if applicable.
+(4) Keep your response concise and precise.
+Below is the input information:\n\n"""
 
     # Planner
-    reasoning_session_init: str = """As the leader of network security Incident response, you are responsible for high-level planning and maintaining an Incident Response Tree (IRT). Please follow the principles below:
-(1) Task Structure: Organize tasks in a hierarchical sequence (e.g., 1, 1.1, 1.1.1, sub-tasks arranged according to their parent task hierarchy).
-(2) Assign a status to each task: To-do or Completed. Update these statuses based on the latest results and provide brief reports of the outcomes. Note: 'Incident Response Goals' cannot be marked as 'Not Applicable'.
-(3) Be aware that you need to fill in the relevant specific content (usually information or answers to the problem) in parentheses after each sub-task under the "Incident Response Goal" section, replacing the task status, as shown in the following IRT.
-(4) Note that you should only add sub-tasks to gather more information if you're uncertain about a task or if the result of the previous task requires further analysis (e.g., detailed analysis of results from historical commands). **Do not add information that has not been discovered into the IRT**.
-(5) **Do not use global search flags such as "find", "grep"!**
+    Planner_init: str = """As the leader of cybersecurity incident response, you are responsible for high-level planning and maintaining an Incident Response Tree (IRT). Adhere to the following principles:
+1. **Task Structure**: 
+   - Organize all tasks in a hierarchical sequence (e.g., 1, 1.1, 1.1.1), where sub-tasks are nested under their parent tasks to form a clear tree-like structure.  
+   - Each level reflects the dependency and granularity of tasks, ensuring logical progression from high-level objectives to specific actions.
+   
+2. **Task Status and Updates**:  
+   - Assign each task a status: "To Do," "Completed," or "N/A," and update it based on the latest findings with a brief outcome report.  
+   - For tasks under "1. Incident Response Objectives," replace the status with specific details (e.g., answers or information) in parentheses once resolved (e.g., "1.1 Server OS version - (Ubuntu 20.04)"). Note: "N/A" is not permitted in this section.  
+   - For other sections (e.g., "2. Incident Response Procedures"), retain the standard status labels and append results separately when applicable.
+   
+3. **Adding Sub-Tasks**:  
+   - Only add sub-tasks if a task is unclear or requires further investigation (e.g., analyzing historical command outputs). Avoid including unverified or undiscovered information in the IRT.
+   
+4. **Prohibited Commands**:  
+   - Do not use global search commands such as "find" or "grep."
+   
+Below are the IRT templates generated under two different scenarios:
 
-Here are two examples of IRT templates generated in different scenarios:
-
-Scenario 1: If the tasks provided by the security analyst are clear (e.g., needing to retrieve specific information using a certain method), just execute "1. Incident Response Goal" in order without adding extra tasks:
+**Scenario 1**: When tasks are clear (e.g., specific information is required via a defined method), focus solely on "1. Incident Response Objectives" without additional sections:
 ```
 1. Incident Response Objectives (linux) - [To-do]
     1.1 Server OS version - (To-do)
-    1.2 Sensitive files in giorgio's home directory - (To-do)
-    1.3 Sensitive content in giorgio's .bashrc - (To-do)
-    1.4 Sensitive content in giorgio's cron jobs - (To-do)     
-    1.5 Error message returned when logging into root user terminal - (To-do)
-    1.6 Command shown after error message when logging into root user terminal - (To-do)
-    1.7 Executable files for suspicious commands - (To-do)
-    1.8 A persistence mechanism in the system (user) - (To-do)
-    1.9 Final hidden flag in the system - (To-do)
+    1.2 Sensitive files in home directory - (To-do)
+    1.3 ... - (To-do)
+    ...
 ```
 
-Scenario 2: If the security analyst has not provided clear task information (**as long as there is a "flag field" in the task**), further investigation is needed, and "2. Intrusion Investigation" can be added:
+**Scenario 2**: When tasks lack clarity (e.g., involving a "flag field"), expand the IRT with "2. Incident Response Procedures" for further investigation:
 ```
 1. Incident Response Objectives (linux) - [To-do]
     1.1 Attacker IP - (...)
-    1.2 Modified plaintext admin password - (...)
-    1.3 First Webshell connection URL - (...)
-    1.4 Webshell connection password - (To-do)
-    1.5 Trojan file uploaded later - (To-do)
-    1.6 flag1 - (To-do)
-    1.7 flag2 - (flag{...})
-    1.8 flag3 - (flag{...})
+    1.2 Modified plaintext admin password - (To-do)
+    ...
 2. Incident Response Procedures - [To-do]
     2.1 Review Command History - (Completed)
+        Results from 2.1:
+        - ...
     2.2 Investigate Sensitive Directories - (To-do)
     2.3 Analyze System Logs - (To-do)
     2.4 Check Open Ports and Services - (To-do)
-        Results:
+        Results from 2.4:
         - Port 21: ftp
         - Port 22: ssh
     2.5 Investigate Abnormal Behavior - (To-do)
@@ -69,27 +70,28 @@ Scenario 2: If the security analyst has not provided clear task information (**a
         2.5.2 Investigate Startup Items - (To-do)
         2.5.3 Investigate Cron Jobs - (To-do)
     2.6 Check Account Security - (To-do)
-        Results:
+        Results from 2.6:
         - Suspicious account: ...
     2.7 Investigate Suspicious Files - (To-do)
         2.7.1 Check Modified Files - (To-do)
     2.8 Check Database Content - (To-do)
 ```
-**Note:** You only need to maintain one Incident Response Tree (IRT). If you understand, please reply with 'Yes'."""
+Maintain a single IRT for your response. If you understand, please respond with 'Yes.'"""
 
-    task_description: str = """Based on the information provided by the security analyst, please construct the Incident Response Tree (IRT) following the principles below:
-(1). If the tasks provided by the security analyst are clear (e.g., retrieving something using a specific method), place these tasks under "1. Incident Response Objectives", starting from the following IRT:
+    task_description: str = """You are tasked with constructing an Incident Response Tree (IRT) based on the security analyst's information. Adhere to these principles:
+**Scenario 1**: When tasks are clear (e.g., specific information is required via a defined method), focus solely on "1. Incident Response Objectives" without additional sections:
 ```
 1. Incident Response Objectives (linux/windows) - [To-do]
     1.1 ... - (To-do)
     1.2 ... - (To-do)
+    ...
 ```
 
-(2). If the security analyst has not provided clear task information (**whenever a "flag field" exists in the task**), further investigation is required. Add "2. Intrusion Investigation" starting from the following IRT:
+**Scenario 2**: When tasks lack clarity (e.g., involving a "flag field"), expand the IRT with "2. Incident Response Procedures" for further investigation:
 ```
 1. Incident Response Objectives (linux/windows) - [To-do]
-    1.1 xxx - (To-do)
-    1.2 xxx - (To-do)
+    1.1 ... - (To-do)
+    1.2 ... - (To-do)
 2. Incident Response Procedures - [To-do]
     2.1 Review Command History - (To-do)
     2.2 Investigate Sensitive Directories - (To-do)
@@ -104,58 +106,64 @@ Scenario 2: If the security analyst has not provided clear task information (**a
         2.7.1 Check Modified Files - (To-do)
     2.8 Check Database Content - (To-do)
 ```
-Below is the information provided by the security analyst:\n\n"""
+Construct the IRT using the security analyst’s information provided below:\n\n"""
 
-    process_results: str = """You should revise the Incident Response Tree (IRT) based on the provided analysis results. Please follow the principles below:
-(1) Task Structure: Organize tasks in a hierarchical sequence (e.g., 1, 1.1, 1.1.1, sub-tasks arranged according to their parent task hierarchy).
-(2) Assign a status to each task: To-do or Completed. Update these statuses based on the latest results and provide a brief report of the outcomes. Note: 'Incident Response Objectives' cannot be marked as 'Not Applicable'.
-(3) Note that in the "Incident Response Objectives" section, you need to fill in the relevant specific content (usually information or answers to the problem) in parentheses after each sub-task, replacing the task status.
-(4) Only add sub-tasks to gather more information if you're uncertain about a task or if the result of the previous task requires further analysis (e.g., detailed analysis of results from historical commands). ***Do not add information that has not been discovered into the IRT, and do not abbreviate the IRT***.
-(5) Do not mark a task as completed if it has not been fully checked. For example, if you have only checked one existing sub-task but the parent task may have other elements, do not mark the parent task as completed.\n\n"""
+    process_results: str = """You should revise the Incident Response Tree (IRT) based on the provided analysis results. Adhere to the following principles:
+(1). Task Structure: 
+   - Organize all tasks in a hierarchical sequence (e.g., 1, 1.1, 1.1.1), where sub-tasks are nested under their parent tasks to form a clear tree-like structure.  
+   - Each level reflects the dependency and granularity of tasks, ensuring logical progression from high-level objectives to specific actions.
+(2). Task Status and Updates:  
+   - Assign each task a status: "To Do," "Completed," or "N/A," and update it based on the latest findings with a brief outcome report.  
+   - For tasks under "1. Incident Response Objectives," replace the status with specific details (e.g., answers or information) in parentheses once resolved (e.g., "1.1 Server OS version - (Ubuntu 20.04)"). Note: "N/A" is not permitted in this section.  
+   - For other sections (e.g., "2. Incident Response Procedures"), retain the standard status labels and append results separately when applicable.
+(3). Adding Sub-Tasks:  
+   - Only add sub-tasks if a task is unclear or requires further investigation (e.g., analyzing historical command outputs). Avoid including unverified or undiscovered information in the IRT.
+(4). Task Completion Criteria:
+   - A task can only be marked as "Completed" when all its sub-tasks are either "Completed" or justifiably marked as "N/A."
+   - If a task has sub-tasks, do not mark it as "Completed" until all sub-tasks are resolved. For example, if a parent task has multiple sub-tasks and only one has been checked, the parent task remains "To Do" until all are addressed.n\n"""
 
-    process_results_task_selection: str = """Based on the latest IRT (and prioritizing the newly added or unresolved sub-tasks from previous analyses), select the next to-do task (do not print the IRT), following these guidelines:
-(1) If there are sub-tasks previously added to the IRT that are still unresolved, prioritize handling those sub-tasks.
-(2) If all of the above sub-tasks have been completed, select an unresolved target from "1. Incident Response Objectives (windows)" and propose feasible actions or investigation plans based on known information or existing investigation leads.
-(3) If the target has no clear lead (cannot be resolved directly), choose the most likely to resolve the target from the to-do sub-tasks in "2. Intrusion Investigation".
-(4) If encountering a flag or other abstract target, continue to work through the ongoing or to-do items in "2. Intrusion Investigation" in order.
-Finally, provide a brief explanation in two sentences of how you plan to execute the selected task. Note: Automated incident response tools are not allowed.\n\n"""
+    task_selection: str = """Based on the latest IRT, select the next to-do task, following these prioritized steps:
+(1) Address any unresolved sub-tasks from the IRT.
+(2) If all IRT sub-tasks are completed, choose an unresolved objective from '1. Incident Response Objectives' and propose a feasible action or investigation plan based on current information.
+(3) If the objective lacks clear leads, select the most relevant to-do sub-task from '2. Incident Response Procedures' that could help resolve the objective.
+(4)  For abstract objectives like flags, continue with the next to-do item in '2. Incident Response Procedures'.
+Provide a two-sentence explanation of how you plan to execute the selected task.\n\n"""
 
-    regenerate: str = """The security analyst has questions regarding the current incident response tasks and requests further discussion with you in order to re-analyze the current tasks based on his questions.  
-Please read the analyst's input and analyze the tasks according to the requirements, modifying the IRT task tree as needed.
-Here is the input from the security analyst:\n"""
-
-    discussion: str = """The security analyst/reflection agent has provided the following thoughts/suggestions for your reference. Please provide your feedback and update the IRT if necessary. Here is the input from the security analyst/reflection agent:\n"""
+    regenerate: str = (
+        """The security analyst has raised questions about the current incident response tasks and would like to discuss them further with you. Based on their input, please re-analyze the tasks and modify the IRT task tree as necessary. Below is the input from the security analyst for your consideration.\n"""
+    )
+    discussion: str = (
+        """The security analyst/reflection agent has shared their thoughts and suggestions for your consideration. Please review this input, provide your feedback, and update the IRT if necessary. Below is the input from the security analyst/reflection agent:\n"""
+    )
 
     # ToT
-    analysis_results: str = """The security analyst has provided the results of command execution or guidance execution. You need to first analyze the results and then update the IRT based on the existing information:
-(1) Perform a detailed and comprehensive analysis of the provided information; if further investigation is needed, add sub-tasks (e.g., 2.1.1) at the appropriate places and output the updated IRT.
-(2) Pay special attention to the services mentioned in the information (e.g., Redis, MySQL, FTP, Apache, etc.), and list the necessary security measures or countermeasures in the corresponding sections of the IRT.
-Please follow the principles below:
-(1) Task Hierarchy: Use hierarchical sequences (e.g., "1", "1.1", "1.1.1") to clearly define the relationship between parent and child tasks.
-(2) Task Status: Assign "To-do" or "Completed" status to each task, and update the status based on the latest results. Provide a brief report of the outcomes. Note: Sub-tasks under Incident Response Goals must not be marked as "Not Applicable."
-(3) Note that in the Incident Response Objectives section, the parentheses after each sub-task should contain specific information or answers to the problem, not the usual "To-do" or "Completed" status.
-(4) Only add sub-tasks to gather more information if you are uncertain about a task or if the result of the previous task requires further analysis (e.g., detailed analysis of results from historical commands). **Do not add information that has not been discovered into the IRT, and do not abbreviate the IRT**.
-(5) Do not mark a parent task as "Completed" until all its sub-tasks have been thoroughly checked. Only mark the parent task as "Completed" once all sub-tasks have been verified.
-(6) Only modify, add, or update the sub-tasks of the IRT based on the current latest analysis results. Do not modify already determined parent nodes. Avoid confusing existing content with newly added content, and provide the final complete IRT in your output.
-**You need to analyze the input first and then update the IRT.** Here is the input from the security analyst:\n\n"""
+    analysis_results: str = """The security analyst has provided results from command or guidance execution. First, analyze them thoroughly. Then, update the IRT according to the following guidelines:
+(1) Conduct a detailed analysis of the provided information. If further investigation is required, add sub-tasks (e.g., 2.1.1) in the appropriate sections of the IRT.
+(2) Pay special attention to any mentioned services (e.g., Redis, MySQL, FTP, Apache) and include necessary security measures or countermeasures in the relevant IRT sections.
+Adhere to the following principles:
+(1) Task Hierarchy: Use hierarchical sequences (e.g., "1", "1.1", "1.1.1") to clearly indicate parent-child task relationships.
+(2) Task Status: Assign "To Do", "Completed" or "N/A" status to each task, and update the status based on the latest results and provide a brief outcome report. Note: Sub-tasks under "Incident Response Objectives" must not be marked as "N/A." Instead, include specific information or answers in parentheses.
+(3) Only add sub-tasks if you need more information or if previous results require further analysis (e.g., examining historical command outputs). **Do not add unverified information to the IRT or abbreviate it.**.
+(4) Do not mark a parent task as "Completed" until all its sub-tasks are thoroughly checked and verified. 
+(5) Only modify, add, or update sub-tasks based on the latest analysis. Do not alter established parent nodes. Ensure newly added content is distinct from existing content.
+**You need to analyze the input first and then update the IRT.** Below is the input from the security analyst:\n\n"""
 
-    analysis_files: str = """The following files (code, scripts, or traffic packets, etc.) were discovered by the security analyst. You need to first analyze them and then update the IRT based on the existing information:
-(1) Perform a detailed and comprehensive analysis of the provided information; if further investigation is needed, add sub-tasks (e.g., 2.1.1) at the appropriate places and output the updated IRT.
+    analysis_files: str = """The security analyst has provided files (e.g., code, scripts, traffic packets) for review. First, analyze them thoroughly. Then, update the IRT according to the following guidelines:
+(1) Conduct a detailed analysis of the provided information. If further investigation is required, add sub-tasks (e.g., 2.1.1) in the appropriate sections of the IRT.
 (2) Analyze the file contents:
     - If the file is code or a script, analyze and identify any malicious code sections.
     - If the file is a traffic packet, analyze and identify any abnormal or suspicious traffic.
 (3) Pay special attention to the services mentioned in the information (e.g., Redis, MySQL, FTP, Apache, etc.), and list the necessary security measures or countermeasures in the corresponding sections of the IRT.
-Please follow the principles below:
-(1) Task Hierarchy: Organize tasks using hierarchical sequences (e.g., 1, 1.1, 1.1.1), and arrange them according to the parent-child relationship between tasks.
-(2) Task Status: Assign "To-do" or "Completed" status to each task, and update the status based on the latest results. Provide a brief report of the outcomes. Note: Sub-tasks under Incident Response Goals must not be marked as "Not Applicable."
-(3) Note that in the Incident Response Objectives section, the parentheses after each sub-task should contain specific information or answers to the problem, not the usual "To-do" or "Completed" status.
-(4) Only add sub-tasks to gather more information if you are uncertain about a task or if the result of the previous task requires further analysis (e.g., detailed analysis of results from historical commands). **Do not add information that has not been discovered into the IRT, and do not abbreviate the IRT**.
-(5) Do not mark a parent task as "Completed" until all its sub-tasks have been thoroughly checked. Only mark the parent task as "Completed" once all sub-tasks have been verified.
-(6) Only modify, add, or update the sub-tasks of the IRT based on the current latest analysis results. Do not modify already determined parent nodes. Avoid confusing existing content with newly added content, and provide the final complete IRT in your output.
-**You need to analyze the input first and then update the IRT.** Here is the input from the security analyst:\n\n"""
+Adhere to the following principles:
+(1) Task Hierarchy: Use hierarchical sequences (e.g., "1", "1.1", "1.1.1") to clearly indicate parent-child task relationships.
+(2) Task Status: Assign "To Do", "Completed" or "N/A" status to each task, and update the status based on the latest results and provide a brief outcome report. Note: Sub-tasks under "Incident Response Objectives" must not be marked as "N/A." Instead, include specific information or answers in parentheses.
+(3) Only add sub-tasks if you need more information or if previous results require further analysis (e.g., examining historical command outputs). **Do not add unverified information to the IRT or abbreviate it.**.
+(4) Do not mark a parent task as "Completed" until all its sub-tasks are thoroughly checked and verified. 
+(5) Only modify, add, or update sub-tasks based on the latest analysis. Do not alter established parent nodes. Ensure newly added content is distinct from existing content.
+**You need to analyze the input first and then update the IRT.** Below is the input from the security analyst:\n\n"""
 
     # Reflector
-    reflection_init: str = """You are an advanced agent capable of improving incident response tasks through reflection. Your work will be based on the following three aspects:
+    Reflector_init: str = """You are an advanced agent capable of improving incident response tasks through reflection. Your work will be based on the following three aspects:
 (1) The Incident Response Tree (IRT) you previously designed;
 (2) The decisions you made based on the IRT or reflections on these decisions;
 (3) The results of a series of incident response steps.
@@ -178,17 +186,15 @@ Important Notes:
 (5) If multiple issues are found, list each problem in detail.
 If you understand, please reply with 'Yes'."""
 
-    reflect_input: str = """Please analyze the previous decisions/reflections and identify the reasons for any errors. If multiple errors are identified, list each one in detail. Respond in the following format:
-Step with Error: {Step with Error}
-Cause of Error: {Cause of Error}
-Suggested Correction: {Suggested Correction for the Error}
+    reflect_input: str = """Analyze the previous decisions or reflections to identify any errors and their causes. If multiple errors are found, detail each one using this format:
+Step with Error: {{Describe the step containing the error}}
+Cause of Error: {{Explain why the error occurred}}
+Suggested Correction: {{Propose a fix for the error}}
 ...
+Below is the information from the analyst:\n\n"""
 
-Here is the information provided by the analyst:\n\n"""
-
-    bad_example: str = """This is an incorrect example:
-**Results of Incident Response Step:**
-
+    bad_example: str = """The following is an incorrect example for review:
+**(1). Command output:**
 ```
 [defend@localhost log]$ ls -la
 total 1328
@@ -201,7 +207,7 @@ drwx------.  3 root   root       17 Mar 19 2024 samba
 ...
 ```
 
-**Your previous analysis and decisions:**
+**(2). Your previous analysis and decisions:**
 ```
 Based on the listed log files, we can see the "secure" log file, which typically contains detailed SSH connection information and may include the hacker's IP address. Below is the updated IRT:
 
@@ -225,32 +231,45 @@ Based on the listed log files, we can see the "secure" log file, which typically
 We choose sub-task 2.3.1 "Analyze secure log file." This task can be performed by running the "cat /var/log/secure" command in a Linux system. This command will display the contents of the file and help us identify the hacker's IP address.
 ```
 
-**You need to perform the following analysis:**
+**(3). You need to perform the following analysis:**
 Step with Error: IRT Generation
 Cause of Error: When checking the "/var/log/" directory, "redis" and "secure" log files were found. We need to include the analysis of these log files in Step 2.3 Analyze System Logs.
-Suggested Correction: Add the task of analyzing the "redis" log file under 2.3 Analyze System Logs to ensure a comprehensive review of all critical logs.
+Suggested Correction: Add a sub-task under 2.3 (e.g., 2.3.2 "Analyze redis log") to ensure all relevant logs are reviewed.
 
-If you understand, please reply with 'Yes'. """
+If you understand, respond with 'Yes.'"""
 
     # local task session
     local_task_init: str = (
-        """You are an assistant for network security incident response, and you can focus on the given context, ignoring previous information until new context is provided. You should summarize key information and attempt to address the security analyst's issue accordingly. If you understand, please reply with 'Yes'.\n\n"""
+        """You are an assistant for cybersecurity incident response. Focus solely on the provided context, disregarding prior information unless new context is given. Summarize key details and address the security analyst’s issue based on this context. If you understand, respond with 'Yes.'\n\n"""
     )
 
     local_task_prefix: str = (
-        """Continue the previous request and delve deeper into the issue. Here are the security analyst's findings and questions. You should analyze the problem and provide potential answers. Ensure that the answers are accurate, detailed, and step through your reasoning process. Here is the user's input:\n\n"""
+        """Build on the previous request by analyzing the issue in depth. The security analyst has provided findings and questions below. Review them, offer accurate and detailed answers, and explain your reasoning step-by-step. Here is the input:\n\n"""
     )
 
     local_task_brainstorm: str = (
-        """Continue the previous request and explore the problem further. The security analyst is unsure how to proceed; please try to identify all potential methods for solving the issue. Here is the user's input:\n\n"""
+        """Extend the previous request by exploring the issue further. The security analyst is uncertain about next steps; identify all potential solutions to the problem. Here is the input:\n\n"""
     )
 
-    # Extractor
-    extractor_init: str = """You will assist the network security analyst by helping to extract useful information from the generated results. You should precisely extract the content requested by the security analyst:
-    If you understand, please reply with 'Yes.'"""
+    #
+    Extractor_init: str = (
+        """You are an assistant supporting the cybersecurity analyst by extracting specific information from generated results. Accurately extract only the content requested by the analyst. If you understand, respond with 'Yes.'"""
+    )
 
-    extract_irt: str = """Please extract only the relevant content related to the Incident Response Tree (IRT) from the following text. Avoid generating additional information that does not meet the requirements:\n\n"""
+    extract_irt: str = (
+        """Extract only the content directly related to the Incident Response Tree (IRT) from the text below. Do not include unrelated details or additional information.\n\n"""
+    )
 
-    extract_cmd: str = """Please extract only the relevant content related to commands and execution steps from the following text. Avoid generating additional information that does not meet the requirements:\n\n"""
+    extract_cmd: str = (
+        """Extract only the content directly related to commands and execution steps from the text below. Do not include unrelated details or additional information.\n\n"""
+    )
 
-    extract_keyword: str = """Please extract only the most important keyword from the above tasks in the following text. Avoid generating additional information that does not meet the requirements:\n\n"""
+    extract_keyword: str = (
+        """Extract only the single most significant keyword from the tasks in the text below. Do not include unrelated details or additional information.\n\n"""
+    )
+
+
+if __name__ == "__main__":
+    IRCopilot = IRCopilotPrompt()
+    # print(IRCopilot.Planner_init)
+    print(IRCopilot.bad_example)

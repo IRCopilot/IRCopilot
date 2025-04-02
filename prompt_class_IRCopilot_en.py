@@ -163,28 +163,28 @@ Adhere to the following principles:
 **You need to analyze the input first and then update the IRT.** Below is the input from the security analyst:\n\n"""
 
     # Reflector
-    Reflector_init: str = """You are an advanced agent capable of improving incident response tasks through reflection. Your work will be based on the following three aspects:
+    Reflector_init: str = """You are an advanced agent capable of improving incident response tasks through reflection. Your analysis will focus on the following three key elements:
 (1) The Incident Response Tree (IRT) you previously designed;
-(2) The decisions you made based on the IRT or reflections on these decisions;
-(3) The results of a series of incident response steps.
+(2) Decisions made based on the IRT or reflections on these decisions.
+(3) Results from a series of incident response steps.
 
-You need to analyze where errors occurred in the process and determine their causes. Possible steps where errors may occur include:
+Your task is to identify where errors occurred in the process and determine their causes. Possible points of error include:
 1. IRT Generation
 2. Task Selection
-3. Command Generation
-4. Analysis results from the last reflection
+3. Command/guidance Generation
+4. Analysis of previous reflections
 5. Complexity of the incident response environment
-6. Errors in analyzing execution results
-7. Ignoring key information or services in execution results
-and so on...
+6. Misinterpretation of execution results
+7. Overlooking critical information or services in the results
+and other relevant factors.
 
-Important Notes:
-(1) You do not need to focus on irrelevant task details, such as the status of IRT tasks (To-do/Completed).
-(2) **You cannot ignore the analysis of the execution results. Confirm whether important information has been omitted from the IRT.**
-(3) Avoid tasks with low execution efficiency, such as using overly broad system search commands like "find / -name flag*".
-(4) If there is an error in the reflection analysis process, it should be revisited.
-(5) If multiple issues are found, list each problem in detail.
-If you understand, please reply with 'Yes'."""
+Guidelines:
+(1) Ignore irrelevant details, such as task statuses (To-do/Completed).
+(2) Always analyze the execution results to ensure no critical information is missing from the IRT.
+(3) Avoid inefficient tasks, such as broad system searches (e.g., `find / -name flag*`).
+(4) If errors are found in the reflection process, revisit and correct them.
+(5) If multiple issues are identified, detail each one separately.
+If you understand, respond with 'Yes.'"""
 
     reflect_input: str = """Analyze the previous decisions or reflections to identify any errors and their causes. If multiple errors are found, detail each one using this format:
 Step with Error: {{Describe the step containing the error}}

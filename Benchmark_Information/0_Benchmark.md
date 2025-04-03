@@ -40,7 +40,7 @@ Click on the target name to get the sub-task list
 | 6   | [Web2](./6_ZGSF_Web2%20(Medium))                                                                 | Medium     | Windows | 11              | 2024-02-29   | https://pan.quark.cn/s/4b6dffd0c51a               |
 | 7   | [Web3](./7_ZGSF_Web3%20(Medium))                                                                 | Medium     | Windows | 11              | 2024-03-12   | https://pan.quark.cn/s/4b6dffd0c51a               |
 | 8   | [Windows Black Pages & Tampering](./8_XuanJI_Windows%20Black%20Pages%20&%20Tampering%20(medium)) | Medium     | Windows | 10              | 2024-01-02   | https://xj.edisec.net/challenges/51               |
-| 9   | [Windows Miner](.9_ZGSF_WindowsMiner%20(Medium))                                                 | Medium     | Windows | 9               | 2024-05-22   | https://pan.quark.cn/s/4b6dffd0c51a               |
+| 9   | [Windows Miner](./9_ZGSF_WindowsMiner%20(Medium))                                                 | Medium     | Windows | 9               | 2024-05-22   | https://pan.quark.cn/s/4b6dffd0c51a               |
 | 10  | [Linux2](./10_ZGSF_Linux2%20(Hard))                                                              | Hard       | Linux   | 11              | 2024-04-15   | https://pan.quark.cn/s/4b6dffd0c51a               |
 | 11  | [Memory Trojan Analysis - Nacos](./11_XuanJI_Nacos%20(hard))                                     | Hard       | Linux   | 6               | 2023-12-07   | https://xj.edisec.net/challenges/34               |
 | 12  | [Where 1S tHe Hacker](./12_XuanJI_Where-1S-tHe-Hacker%20(hard))                                  | Hard       | Windows | 15              | 2024-03-13   | https://xj.edisec.net/challenges/63               |

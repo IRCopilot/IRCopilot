@@ -56,13 +56,13 @@ Click on the target name to get the sub-task list
 ### Data Contamination Mitigation. [Have LLMs been trained on benchmark tests or writeups?](./Have%20LLMs%20been%20trained%20on%20benchmark%20tests%20or%20writeups)
 IRCopilot is built based on LLMs, recognizing that cases or writeups on these platforms may already be included in LLM training data, which can potentially bias experimental results. To address concerns about data contamination in LLMs/IRCopilot, we implement three measures. First, we prioritize benchmark cases with more recent publication dates during the selection process, which are most likely to fall outside the scope of the LLMs' training data. we compare the publication date of each selected case with the specific knowledge cutoff dates of the LLMs as shown in Table. For example, IRCopilot-GPT-4o demonstrates this through its performance and cutoff date. Second, we assess whether the LLMs underwent targeted training by querying them for detailed information about specific cases. More details are available at our Anonymous Github repository for transparency. Finally, since IRCopilot has the ability to display each step of its reasoning process, we confirm through an examination of its reasoning paths that it lacks prior knowledge of the cases. Furthermore, real-world cases in practicality study further demonstrated that, even without targeted training, IRCopilot shows significant feasibility and effectiveness in real-world applications.
 
+*Table: Comparison of IR benchmark release dates against LLM knowledge cutoff dates.*
+
 | **Model**          | **\gptfour{}** | **\deepseek{}** | **\gptfouro{}** | **\claude{}** |
 |--------------------|----------------|-----------------|-----------------|---------------|
 | **Knowledge Cutoff** | 2023-04        | 2024-07         | 2023-10         | 2024-04       |
 | **Tasks After Cutoff** | 10           | 0               | 10              | 3             |
 | **Tasks Before Cutoff** | 2           | 12              | 2               | 9             |
-
-*Table: Comparison of IR benchmark release dates against LLM knowledge cutoff dates.*
 
 #### Comparison of LLM Knowledge Cutoff Dates Against IR Benchmark Release Dates
 A checkmark (✓) indicates the benchmark was released after the model's cutoff date, meaning the model would lack information about it, while a cross (×) shows the benchmark predates the cutoff.

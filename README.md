@@ -58,29 +58,28 @@ IRCopilot is built based on LLMs, recognizing that cases or writeups on these pl
 
 *Table: Comparison of IR benchmark release dates against LLM knowledge cutoff dates.*
 
-| **Model**          | GPT-4 | DeepSeek-V3 | GPT-4o | Claude-3.5-Sonnet |
-|--------------------|----------------|-----------------|-----------------|---------------|
-| **Knowledge Cutoff** | 2023-04        | 2024-07         | 2023-10         | 2024-04       |
-| **Tasks After Cutoff** | 10           | 0               | 10              | 3             |
-| **Tasks Before Cutoff** | 2           | 12              | 2               | 9             |
+| **Model**          | GPT-4 | DeepSeek-V3 | GPT-4o | Claude-3.5-Sonnet | GPT-o1 |
+|--------------------|----------------|-----------------|-----------------|---------------|---------------|
+| **Cutoff** | 2023-04        | 2024-07         | 2023-10         | 2024-04       | 2023-10         |
+| **After** | 10           | 0               | 10              | 3             | 10              |
+| **Before** | 2           | 12              | 2               | 9             | 2               |
 
 #### Comparison of LLM Knowledge Cutoff Dates Against IR Benchmark Release Dates
-A checkmark (✓) indicates the benchmark was released after the model's cutoff date, meaning the model would lack information about it, while a cross (×) shows the benchmark predates the cutoff.
-|     |                                                                                                                        | **LLM**                   | GPT-4     | DeepSeek-V3 | GPT-4o    | Claude-3.5-Sonnet |
-| --- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------- | --------- | ----------- | --------- | ----------------- |
-|     | **Benchmark**                                                                                                          | **Knowledge Cutoff Date** | (2023-04) | (2024-07)   | (2023-10) | (2024-04)         |
-| 1   | [Investigating Windows](./Benchmark_Information/1_TryHackMe_InvestigatingWindows%20(Easy).md)                          | (2018-12-10)              | ×         | ×           | ×         | ×                 |
-| 2   | [Linux1](./Benchmark_Information/2_ZGSF_Linux1%20(Easy))                                                               | (2024-03-19)              | ✓         | ×           | ✓         | ×                 |
-| 3   | [Web1](./Benchmark_Information/3_ZGSF_Web1%20(Easy))                                                                   | (2024-02-27)              | ✓         | ×           | ✓         | ×                 |
-| 4   | [Tardigrade](./Benchmark_Information/4_TryHackMe_Tardigrade%20(Medium))                                                | (2023-02-24)              | ×         | ×           | ×         | ×                 |
-| 5   | [VulnTarget-n-Ransomware](./Benchmark_Information/5_XuanJI_VulnTarget-n-Ransomware%20(Medium))                         | (2024-06-01)              | ✓         | ×           | ✓         | ✓                 |
-| 6   | [Web2](./Benchmark_Information/6_ZGSF_Web2%20(Medium))                                                                 | (2024-02-29)              | ✓         | ×           | ✓         | ×                 |
-| 7   | [Web3](./Benchmark_Information/7_ZGSF_Web3%20(Medium))                                                                 | (2024-03-12)              | ✓         | ×           | ✓         | ×                 |
-| 8   | [Windows Black Pages & Tampering](./Benchmark_Information/8_XuanJI_Windows%20Black%20Pages%20&%20Tampering%20(medium)) | (2024-01-02)              | ✓         | ×           | ✓         | ×                 |
-| 9   | [Windows Miner](./Benchmark_Information/9_ZGSF_WindowsMiner%20(Medium))                                                | (2024-05-22)              | ✓         | ×           | ✓         | ✓                 |
-| 10  | [Linux2](./Benchmark_Information/10_ZGSF_Linux2%20(Hard))                                                              | (2024-04-15)              | ✓         | ×           | ✓         | ✓                 |
-| 11  | [Memory Trojan Analysis - Nacos](./Benchmark_Information/11_XuanJI_Nacos%20(hard))                                     | (2023-12-07)              | ✓         | ×           | ✓         | ×                 |
-| 12  | [Where 1S tHe Hacker](./Benchmark_Information/12_XuanJI_Where-1S-tHe-Hacker%20(hard))                                  | (2024-03-13)              | ✓         | ×           | ✓         | ×                 |
+|     |                                                                                                                        | **LLM**                   | GPT-4     | DeepSeek-V3 | GPT-4o    | Claude-3.5-Sonnet | GPT-o1    |
+| --- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------- | --------- | ----------- | --------- | ----------------- | --------- |
+|     | **Benchmark**                                                                                                          | **Knowledge Cutoff Date** | (2023-04) | (2024-07)   | (2023-10) | (2024-04)         | (2023-10) |
+| 1   | [Investigating Windows](./Benchmark_Information/1_TryHackMe_InvestigatingWindows%20(Easy).md)                          | (2018-12-10)              | ×         | ×           | ×         | ×                 | ×         |
+| 2   | [Linux1](./Benchmark_Information/2_ZGSF_Linux1%20(Easy))                                                               | (2024-03-19)              | ✓         | ×           | ✓         | ×                 | ✓         |
+| 3   | [Web1](./Benchmark_Information/3_ZGSF_Web1%20(Easy))                                                                   | (2024-02-27)              | ✓         | ×           | ✓         | ×                 | ✓         |
+| 4   | [Tardigrade](./Benchmark_Information/4_TryHackMe_Tardigrade%20(Medium))                                                | (2023-02-24)              | ×         | ×           | ×         | ×                 | ×         |
+| 5   | [VulnTarget-n-Ransomware](./Benchmark_Information/5_XuanJI_VulnTarget-n-Ransomware%20(Medium))                         | (2024-06-01)              | ✓         | ×           | ✓         | ✓                 | ✓         |
+| 6   | [Web2](./Benchmark_Information/6_ZGSF_Web2%20(Medium))                                                                 | (2024-02-29)              | ✓         | ×           | ✓         | ×                 | ✓         |
+| 7   | [Web3](./Benchmark_Information/7_ZGSF_Web3%20(Medium))                                                                 | (2024-03-12)              | ✓         | ×           | ✓         | ×                 | ✓         |
+| 8   | [Windows Black Pages & Tampering](./Benchmark_Information/8_XuanJI_Windows%20Black%20Pages%20&%20Tampering%20(medium)) | (2024-01-02)              | ✓         | ×           | ✓         | ×                 | ✓         |
+| 9   | [Windows Miner](./Benchmark_Information/9_ZGSF_WindowsMiner%20(Medium))                                                | (2024-05-22)              | ✓         | ×           | ✓         | ✓                 | ✓         |
+| 10  | [Linux2](./Benchmark_Information/10_ZGSF_Linux2%20(Hard))                                                              | (2024-04-15)              | ✓         | ×           | ✓         | ✓                 | ✓         |
+| 11  | [Memory Trojan Analysis - Nacos](./Benchmark_Information/11_XuanJI_Nacos%20(hard))                                     | (2023-12-07)              | ✓         | ×           | ✓         | ×                 | ✓         |
+| 12  | [Where 1S tHe Hacker](./Benchmark_Information/12_XuanJI_Where-1S-tHe-Hacker%20(hard))                                  | (2024-03-13)              | ✓         | ×           | ✓         | ×                 | ✓         |
 
 ### Prompt
 [Prompt of IRCopilot](./prompt_class_IRCopilot_en.py), and the code will be relased after the publication of the paper.

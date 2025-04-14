@@ -58,7 +58,7 @@ IRCopilot is built based on LLMs, recognizing that cases or writeups on these pl
 
 *Table: Comparison of IR benchmark release dates against LLM knowledge cutoff dates.*
 
-| **Model**          | **\gptfour{}** | **\deepseek{}** | **\gptfouro{}** | **\claude{}** |
+| **Model**          | GPT-4 | DeepSeek-V3 | GPT-4o | Claude-3.5-Sonnet |
 |--------------------|----------------|-----------------|-----------------|---------------|
 | **Knowledge Cutoff** | 2023-04        | 2024-07         | 2023-10         | 2024-04       |
 | **Tasks After Cutoff** | 10           | 0               | 10              | 3             |

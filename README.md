@@ -1,6 +1,6 @@
 # 👋 IRCopilot: Automated Incident Response with Large Language Models
 
-Source code for paper "IRCopilot: Automated Incident Response with Large Language Models", the code will be relased after the publication of the paper. [Prompt of IRCopilot](./prompt_class_IRCopilot_en.py)
+Source code for paper "IRCopilot: Automated Incident Response with Large Language Models", the code will be relased after the publication of the paper. The prompt is available at .[Prompt of IRCopilot](./prompt_class_IRCopilot_en.py)
 
 ### Benchmark
 #### [benchmark info](./Benchmark_Information/)

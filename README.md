@@ -68,7 +68,7 @@ Data Contamination Mitigation. IRCopilot is built based on LLMs, recognizing tha
 | **Before** | 2           | 12              | 2               | 9             | 2               | | **27** |
 
 #### Comparison of LLM Knowledge Cutoff Dates Against IR Benchmark Release Dates
-|     |                                                                                                                        | **LLM**                   | GPT-4     |           | DeepSeek-V3 | GPT-4o    | Claude-3.5-Sonnet | GPT-o1    |
+|     |                                                                                                                        | **LLM**                   | GPT-4     | Llama3-70b | DeepSeek-V3 | GPT-4o    | Claude-3.5-Sonnet | GPT-o1    |
 | --- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------- | --------- | --------- | ----------- | --------- | ----------------- | --------- |
 |     | **Benchmark**                                                                                                          | **Knowledge Cutoff Date** | (2023-04) | (2023-12) | (2024-07)   | (2023-10) | (2024-04)         | (2023-10) |
 | 1   | [Investigating Windows](./Benchmark_Information/1_TryHackMe_InvestigatingWindows%20(Easy).md)                          | (2018-12-10)              | ×         | ×         | ×           | ×         | ×                 | ×         |

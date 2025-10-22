@@ -29,32 +29,33 @@ Click on the target name to get the sub-task list
 | **Phase**     | **Technique**                            | **Description**                                                                                                               |
 | ------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | **Detection** | System Information Gathering             | Includes operating system identification, network configuration analysis, hardware information gathering, etc.                |
-|               | Open Port Identification                 | Detect open network ports on the target system.                                                                               |
-|               | Service Enumeration                      | Identify and analyze running services to uncover version details and vulnerabilities.                                         |
-|               | Directory Inspection                     | Examine key directories and hidden files for unusual activity.                                                                |
-|               | Account Security Review                  | Audit user account permissions and identify unauthorized accounts or backdoors.                                               |
-|               | File Integrity Check                     | Monitor file hashes to detect unauthorized changes.                                                                           |
-|               | Other Detections                         | Inspect other vulnerable areas of the system, such as the registry, etc.                                                      |
-| **Response**  | Historical Command and Behavior Analysis | Review user commands and system behaviors to detect abnormal operations.                                                      |
-|               | Permission Review and Management         | Audit system and application permissions to enforce least-privilege principles and manage risky permissions.                  |
-|               | File Analysis                            | Inspect system files and source code for vulnerabilities or malicious content.                                                |
-|               | Malicious File Handling                  | Identify, isolate, and remove malicious files to prevent further damage.                                                      |
-|               | Startup Item Analysis                    | Review startup items for unauthorized programs or scripts.                                                                    |
-|               | Scheduled Task Analysis                  | Analyze the system's scheduled tasks settings to identify possible malicious or planned tasks.                                |
-|               | Anomaly Behavior Response                | Respond to abnormal system or user behaviors to contain potential threats.                                                    |
-|               | Memory and Process Analysis              | Examine memory and processes to identify abnormal or malicious activity.                                                      |
-|               | Malicious Process Handling               | Terminate malicious processes to mitigate ongoing threats.                                                                    |
-|               | System Log Analysis                      | Analyze system logs for signs of compromise, unauthorized access, or suspicious activities.                                   |
-|               | Application Log Analysis                 | Review application logs for exploitation attempts or unusual behavior.                                                        |
-|               | Network Traffic Analysis                 | Analyze network traffic to identify suspicious communication or data exfiltration.                                            |
-|               | Risky IP Management                      | Block or monitor traffic from known malicious or suspicious IP addresses.                                                     |
-|               | Database Analysis                        | Analyze databases for security vulnerabilities, data leaks, or unauthorized access.                                           |
-|               | Other Responses                          | Conduct additional response activities, such as analyzing virtualization environments or reviewing container security.        |
-| **Recovery**  | System Recovery                          | Restore the system to a stable state after failures, malware, or misconfigurations.                                           |
-|               | Data Recovery                            | Recover lost or corrupted data from backups or damaged media.                                                                 |
-|               | Service Recovery                         | Restore key services and applications to minimize downtime.                                                                   |
-|               | Vulnerability Patching                   | Apply patches to fix vulnerabilities and prevent recurrence of attacks.                                                       |
+|               | Open Port Identification                 | Detects open network ports on the target system.                                                                              |
+|               | Service Enumeration                      | Identifies and analyzes running services to uncover version details and vulnerabilities.                                      |
+|               | Directory Inspection                     | Examines key directories and hidden files for unusual activity.                                                               |
+|               | Account Security Review                  | Audits user account permissions and identifies unauthorized accounts or backdoors.                                            |
+|               | File Integrity Check                     | Monitors file hashes to detect unauthorized changes.                                                                          |
+|               | Other Detections                         | Inspects other vulnerable areas of the system, such as the registry, etc.                                                     |
+| **Response**  | Historical Command and Behavior Analysis | Reviews user commands and system behaviors to detect abnormal operations.                                                     |
+|               | Permission Review and Management         | Audits system and application permissions to enforce least-privilege principles and manages risky permissions.                |
+|               | File Analysis                            | Inspects system files and source code for vulnerabilities or malicious content.                                               |
+|               | Malicious File Handling                  | Identifies, isolates, and removes malicious files to prevent further damage.                                                  |
+|               | Startup Item Analysis                    | Reviews startup items for unauthorized programs or scripts.                                                                   |
+|               | Scheduled Task Analysis                  | Analyzes the system's scheduled tasks settings to identifies possible malicious or planned tasks.                             |
+|               | Anomaly Behavior Response                | Responds to abnormal system or user behaviors to contain potential threats.                                                   |
+|               | Memory and Process Analysis              | Examines memory and processes to identify abnormal or malicious activity.                                                     |
+|               | Malicious Process Handling               | Terminates malicious processes to mitigate ongoing threats.                                                                   |
+|               | System Log Analysis                      | Analyzes system logs for signs of compromise, unauthorized access, or suspicious activities.                                  |
+|               | Application Log Analysis                 | Reviews application logs for exploitation attempts or unusual behavior.                                                       |
+|               | Network Traffic Analysis                 | Analyzes network traffic to identify suspicious communication or data exfiltration.                                           |
+|               | Risky IP Management                      | Blocks or monitors traffic from known malicious or suspicious IP addresses.                                                   |
+|               | Database Analysis                        | Analyzes databases for security vulnerabilities, data leaks, or unauthorized access.                                          |
+|               | Other Responses                          | Conducts additional response activities, such as analyzing virtualization environments or reviewing container security.       |
+| **Recovery**  | System Recovery                          | Restores the system to a stable state after failures, malware, or misconfigurations.                                          |
+|               | Data Recovery                            | Recovers lost or corrupted data from backups or damaged media.                                                                |
+|               | Service Recovery                         | Restores key services and applications to minimize downtime.                                                                  |
+|               | Vulnerability Patching                   | Applies patches to fix vulnerabilities and prevents recurrence of attacks.                                                    |
 |               | Other Recoveries                         | Additional recovery methods, such as network recovery and permission reset, to address various aspects of system restoration. |
+
 
 #### IRBench Difficulty Standard
 | Difficulty Score | Difficulty Level | Description                                                                                                                                                 | Example                                                                                                                                                                                                       |

@@ -5,6 +5,12 @@ Source code for paper "IRCopilot: Automated Incident Response with Large Languag
 ![workflow](./images/workflow1.png)
 <p align="center"> Figure 1: Workflow of IRCopilot. This figure illustrates the principle of IRCopilot, structured into three cognitive stages: Reasoning, Action, and Reflection. 1. In the Reasoning phase, we design the Planner and Analyst to maintain the IRT and tackle Challenges I, III, and IV mentioned in Sec. 4.3 through step-by-step reasoning. 2. In the Action phase, the Generator distributes and generates guidance and commands to mitigate Challenge II. 3. Finally, in the Reflection phase, the Reflector addresses challenges posed by hallucination and privacy risks. </p>
 
+### Prompt
+[Prompt of IRCopilot](./prompt_class_IRCopilot_en.py), and the code will be relased after the publication of the paper.
+
+### Global Cybersecurity Landscape
+[Global Cybersecurity Landscape](./Global%20Cybersecurity%20Landscape.pdf)
+
 ### IRBench
 #### [benchmark info](./Benchmark_Information/)
 Click on the target name to get the sub-task list
@@ -101,10 +107,6 @@ Data Contamination Mitigation. IRCopilot is built based on LLMs, recognizing tha
 | 12  | [Where 1S tHe Hacker](./Benchmark_Information/12_XuanJI_Where-1S-tHe-Hacker%20(hard))                                  | (2024-03-13)              | ✓         | ✓         | ×           | ✓         | ×                 | ✓         |
 |     |                                                                                                                        |                           |           |            |             |           |                   |           |
 |     | (after✓ : predate ×)                                                                                                   | **Total 43:29**           | 10:2      | 10:2      | 0:12        | 10:2      | 3:9               | 10:2      |
-
-### Prompt
-[Prompt of IRCopilot](./prompt_class_IRCopilot_en.py), and the code will be relased after the publication of the paper.
-
 
 <!--
 **IRCopilot/IRCopilot** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.

@@ -11,6 +11,9 @@ Source code for paper "IRCopilot: Automated Incident Response with Large Languag
 ### Global Cybersecurity Landscape
 [Global Cybersecurity Landscape](./Global%20Cybersecurity%20Landscape.pdf)
 
+### Failure Case Analysis
+[Failure Case Analysis](./Case%20Analysis.pdf)
+
 ### IRBench
 #### [benchmark info](./Benchmark_Information/)
 Click on the target name to get the sub-task list

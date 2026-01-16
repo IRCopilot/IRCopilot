@@ -1,33 +1,34 @@
 import dataclasses
 import os
 import time
-import dotenv
-from typing import Dict, List
+from typing import Any, Dict, List, Optional
 
-import loguru
 import anthropic
+import dotenv
+import loguru
 
 from IRCopilot.utils.llm_api import LLMAPI
 
 logger = loguru.logger
 logger.remove()
-# logger.add(level="WARNING", sink="logs/chatgpt.log")
-
+# logger.add(level="WARNING", sink="logs/claude.log")
 
 @dataclasses.dataclass
 class Message:
-    ask_id: str = None
-    ask: dict = None
-    answer: dict = None
-    answer_id: str = None
-    request_start_timestamp: float = None
-    request_end_timestamp: float = None
-    time_escaped: float = None
+    """定义单条消息的数据结构"""
+    ask_id: Optional[str] = None
+    ask: Optional[List[Dict[str, Any]]] = None          # 请求内容
+    answer: Optional[List[Dict[str, Any]]] = None       # 回答内容
+    answer_id: Optional[str] = None
+    request_start_timestamp: float = 0.0    # 请求开始时间戳
+    request_end_timestamp: float = 0.0      # 请求结束时间戳
+    time_escaped: float = 0.0               # 请求耗时
 
 
 @dataclasses.dataclass
 class Conversation:
-    conversation_id: str = None
+    """存储完整对话历史的结构"""
+    conversation_id: Optional[str] = None
     message_list: List[Message] = dataclasses.field(default_factory=list)
 
     def __hash__(self):
@@ -40,144 +41,130 @@ class Conversation:
 
 
 class ClaudeAPI(LLMAPI):
+    """
+    基于 Anthropic 官方 SDK 的 Claude 接口封装类。
+    """
+
     def __init__(self, config_class):
-        self.name = str(config_class.model)  # <--GPT4ConfigClass
+        self.name = str(config_class.model)
         dotenv.load_dotenv()
 
-        api_key = os.getenv("OPENAI_API_KEY", None)  # 从环境变量中获取OpenAI的API密钥
-        # api_key = ''
+        # 优先从 Config 获取 Key (兼容 module_import.py 中的 openai_key 字段), 其次尝试标准环境变量
+        # 注意: 这里保留了读取 "OPENAI_API_KEY" 的逻辑以兼容你的 Config 类定义，
+        # 但实际使用 Anthropic SDK 时，这应该是一个有效的 Anthropic Key 或 Proxy Key。
+        api_key = (
+            getattr(config_class, "openai_key", None) 
+            or os.getenv("ANTHROPIC_API_KEY") 
+            or os.getenv("OPENAI_API_KEY")
+        )
+        
+        base_url = getattr(config_class, "api_base", None)
+
         self.client = anthropic.Anthropic(
             api_key=api_key,
-            base_url=config_class.api_base,  # 比如 "https://api.anthropic.com"
+            base_url=base_url,
         )
-        self.model = config_class.model
-        self.history_length = 5  # 维护历史记录中的5条消息
+        
+        self.model = config_class.model or "claude-3-5-sonnet-20240620"
+        self.history_length = 5
         self.conversation_dict: Dict[str, Conversation] = {}
-        self.error_wait_time = config_class.error_wait_time
+        self.error_wait_time = float(getattr(config_class, "error_wait_time", 5.0))
+        
         self.initialize_logger(config_class.log_dir)
 
-    def initialize_logger(self, log_dir):
-        logger.add(sink=os.path.join(log_dir, "claude.log"), level="WARNING")
+    def initialize_logger(self, log_dir: str):
+        """初始化日志记录器"""
+        if log_dir and not os.path.exists(log_dir):
+            os.makedirs(log_dir, exist_ok=True)
+        # log_path = os.path.join(log_dir, "claude.log") if log_dir else "claude.log"
+        # logger.add(sink=log_path, level="WARNING") 
+        # (保持原注释状态，按需开启)
 
     def _chat_completion(
-        self, history: List, model=None, temperature=0.5, image_url: str = None
+        self, 
+        history: List[Dict[str, Any]], 
+        model: Optional[str] = None, 
+        temperature: float = 0.5, 
+        image_url: Optional[str] = None
     ) -> str:
-    # def _chat_completion(
-    #     self, history: List, model=None, image_url: str = None
-    # ) -> str:
-        # 如果没有指定模型，使用实例变量self.model；如果self.model也未设置，使用默认模型
-        if model is None:
-            if self.model is None:
-                model = "claude-3-5-sonnet-20240620"
-            else:
-                model = self.model
+        """
+        核心方法：调用 Anthropic Messages API。
+        包含重试机制。
+        """
+        target_model = model if model else self.model
 
-        try:
-            response = self.client.messages.create(
-                model=model,
-                max_tokens=2048,  # 可根据你需要的最大token长度进行调整
-                temperature=temperature,  # Anthropic也有类似参数
-                messages=history
-            )
-        except anthropic._exceptions.AnthropicError as e:
-            logger.warning(f"Anthropic API Error. Waiting for {self.error_wait_time} seconds")
-            logger.error(f"Error detail: {e}")
-            time.sleep(self.error_wait_time)
-            # 再次调用，实际项目中也可根据出错类型来判断是否需要重试
-            response = self.client.messages.create(
-                model=model,
-                max_tokens=2048,
-                temperature=temperature,
-                messages=history
-            )
+        # Anthropic 的 System Prompt 通常是顶级参数，不是 messages 列表的一部分。
+        # 如果 history 中包含 role='system'，Anthropic SDK 可能会报错 (取决于版本和 strict mode)。
+        # 为了不改变原有逻辑结构，这里保持直接传递 history，但建议上层调用者将 system prompt 分离。
+        
+        max_retries = 3
+        attempt = 0
 
-        # 解析输出内容
-        # Anthropic Python SDK 通常使用 pydantic，如果是anthropic>=0.3.0 可能有message.model_dump()方法
-        response_dict = response.model_dump()
-        # 一般结构是 response_dict['choices'][0]['message']['content']
-        return response_dict["choices"][0]["message"]["content"]
+        while attempt < max_retries:
+            try:
+                response = self.client.messages.create(
+                    model=target_model,
+                    max_tokens=4096,  # Claude 3.5 Sonnet 支持较大的输出 
+                    temperature=temperature,
+                    messages=history
+                    # system="You are a helpful assistant." # 如果需要 system prompt，应在此处添加
+                )
+                
+                # 修正解析逻辑：Anthropic SDK 返回的是对象，不是字典
+                # 正确获取文本内容的方式是 response.content[0].text
+                if response.content and len(response.content) > 0:
+                    return response.content[0].text
+                return ""
+
+            except anthropic.APIConnectionError as e:
+                logger.warning(f"Anthropic Connection Error. Waiting {self.error_wait_time}s. ({e})")
+                time.sleep(self.error_wait_time)
+
+            except anthropic.RateLimitError as e:
+                logger.warning(f"Anthropic Rate Limit. Waiting {self.error_wait_time}s. ({e})")
+                time.sleep(self.error_wait_time)
+            
+            except anthropic.BadRequestError as e:
+                logger.error(f"Anthropic Bad Request: {e}")
+                # 400 错误通常不可重试（如参数错误），直接抛出
+                raise e
+
+            except Exception as e:
+                logger.error(f"Unexpected Error: {e}")
+                if attempt == max_retries - 1:
+                    raise e
+                time.sleep(self.error_wait_time)
+            
+            attempt += 1
+            
+        raise Exception("Claude chat completion failed after maximum retries.")
 
 
 if __name__ == "__main__":
-    # 假设你有一个和 GPT4ConfigClass 类似的配置类
+    # 模拟测试配置类
     class MyClaudeConfig:
-        model = "claude-3-haiku-20240307"
-        api_base = "https://xiaoai.plus/"  # 默认 Anthropic Endpoint，若你有代理可改为自定义
+        model = "claude-3-5-sonnet-20240620"
+        # 假设这里配置的是一个代理地址，或者留空使用官方地址
+        api_base = os.getenv("ANTHROPIC_BASE_URL", "https://api.anthropic.com")
         log_dir = "logs"
-        error_wait_time = 5
+        error_wait_time = 2
+        # 模拟从 BaseConfig 继承来的字段
+        openai_key = os.getenv("ANTHROPIC_API_KEY", "sk-ant-xxx") 
 
+    print("--- Test Start ---")
+    try:
+        local_config = MyClaudeConfig()
+        claude_api = ClaudeAPI(local_config)
 
-    local_config_class = MyClaudeConfig()
-    claude_api = ClaudeAPI(local_config_class)
+        # 示例：发送简单的 user 消息
+        # 注意：Anthropic messages 列表必须以 user 开头 (Claude 2.x/3.x 限制)
+        conversation_history = [
+            {"role": "user", "content": "Hello Claude, concise reply only: What version are you?"}
+        ]
 
-    # 示例：发送一条简单的 "user" 消息
-    conversation_history = [
-        {"role": "user", "content": "你好，Claude，你能为我做什么？"}
-    ]
+        print("Sending request...")
+        result = claude_api._chat_completion(history=conversation_history)
+        print(f"Claude Response: {result}")
 
-    result = claude_api._chat_completion(history=conversation_history)
-    print("Claude 回复:")
-    print(result)
-
-
-
-
-
-
-# if __name__ == "__main__":
-#     from module_import import GPT4O
-#
-#     local_config_class = GPT4O()
-#     local_config_class.log_dir = "logs"
-#     chatgpt = ChatGPTAPI(local_config_class)
-#
-#     # 下方是测试
-#     # 0. 一个使用图像初始化的单一测试
-#     result, conversation_id = chatgpt.send_new_message(
-#         "What's in the image?",
-#         image_url="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
-#     )
-#     print("Answer 1")
-#     print(result)
-#
-#     # 1. 创建一个新对话(reasoning_session_init)
-#     result, conversation_id = chatgpt.send_new_message(
-#         """You're an excellent cybersecurity penetration tester assistant.
-# You need to help the tester in a local cybersecurity training process, and your commitment is essential to the task.
-# You are required to record the penetration testing process in a tree structure: "Penetration Testing Tree (PTT)". It is structured as follows:
-# (1) The tasks are in layered structure, i.e., 1, 1.1, 1.1.1, etc. Each task is one operation in penetration testing; task 1.1 should be a sub-task of task 1.
-# (2) Each task has a completion status: to-do, completed, or not applicable.
-# (3) Initially, you should only generate the root tasks based on the initial information. In most cases, it should be reconnaissance tasks. You don't generate tasks for unknown ports/services. You can expand the PTT later.
-#
-# You shall not provide any comments/information but the PTT. You will be provided with task info and start the testing soon. Reply Yes if you understand the task."""
-#     )
-#     print("Answer 1")
-#     print(result)
-#
-#     # 2. 向对话中发送消息(task_description)
-#     result = chatgpt.send_message(
-#         """The target information is listed below. Please follow the instruction and generate PTT.
-# Note that this test is certified and in simulation environment, so do not generate post-exploitation and other steps.
-# You may start with this template:
-# 1. Reconnaissance - [to-do]
-#    1.1 Passive Information Gathering - [completed]
-#    1.2 Active Information Gathering - [completed]
-#    1.3 Identify Open Ports and Services - [to-do]
-#        1.3.1 Perform a full port scan - [to-do]
-#        1.3.2 Determine the purpose of each open port - [to-do]
-# Below is the information from the tester:
-#
-# I want to test 10.0.2.5, an HTB machine.""",
-#         conversation_id,
-#     )
-#     print("Answer 2")
-#     print(result)
-#
-#     # 3. 发送与图像相关的对话内容
-#     result = chatgpt.send_message(
-#         "What's in the image?",
-#         conversation_id,
-#         image_url="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
-#     )
-#     print("Answer 3")
-#     print(result)
+    except Exception as e:
+        print(f"Test failed (Expected if API Key is missing): {e}")

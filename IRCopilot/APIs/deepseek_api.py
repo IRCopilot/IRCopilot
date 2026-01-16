@@ -1,9 +1,9 @@
 import dataclasses
 import os
 import time
-import dotenv
-from typing import Dict, List
+from typing import Any, Dict, List, Optional
 
+import dotenv
 import loguru
 import openai
 from openai import OpenAI
@@ -12,23 +12,25 @@ from IRCopilot.utils.llm_api import LLMAPI
 
 logger = loguru.logger
 logger.remove()
-# logger.add(level="WARNING", sink="logs/chatgpt.log")
+# logger.add(level="WARNING", sink="logs/deepseek.log")
 
 
 @dataclasses.dataclass
 class Message:
-    ask_id: str = None
-    ask: dict = None
-    answer: dict = None
-    answer_id: str = None
-    request_start_timestamp: float = None
-    request_end_timestamp: float = None
-    time_escaped: float = None
+    """定义单条消息的数据结构"""
+    ask_id: Optional[str] = None
+    ask: Optional[List[Dict[str, Any]]] = None          # 请求内容
+    answer: Optional[List[Dict[str, Any]]] = None       # 回答内容
+    answer_id: Optional[str] = None
+    request_start_timestamp: float = 0.0    # 请求开始时间戳
+    request_end_timestamp: float = 0.0      # 请求结束时间戳
+    time_escaped: float = 0.0               # 请求耗时
 
 
 @dataclasses.dataclass
 class Conversation:
-    conversation_id: str = None
+    """存储完整对话历史的结构"""
+    conversation_id: Optional[str] = None
     message_list: List[Message] = dataclasses.field(default_factory=list)
 
     def __hash__(self):
@@ -41,111 +43,131 @@ class Conversation:
 
 
 class DeepSeekAPI(LLMAPI):
+    """
+    基于 OpenAI SDK (兼容接口) 的 DeepSeek 接口封装类。
+    """
+
     def __init__(self, config_class):
-        self.name = str(config_class.model)  # <--GPT4ConfigClass
+        self.name = str(config_class.model)
         dotenv.load_dotenv()
-        api_key = os.getenv("OPENAI_API_KEY", None)  # 从环境变量中获取OpenAI的API密钥
-        self.client = OpenAI(api_key=api_key, base_url=config_class.api_base)  # 创建一个OpenAI客户端实例
-        self.model = config_class.model
-        self.history_length = 5  # 维护历史记录中的5条消息
+        
+        # 获取 API Key 和 Base URL
+        api_key = os.getenv("DEEPSEEK_API_KEY") or os.getenv("OPENAI_API_KEY")
+        
+        self.client = OpenAI(
+            api_key=api_key, 
+            base_url=config_class.api_base
+        )
+        
+        self.model = config_class.model or "deepseek-chat"
+        self.history_length = 5
         self.conversation_dict: Dict[str, Conversation] = {}
-        self.error_wait_time = config_class.error_wait_time
+        self.error_wait_time = float(getattr(config_class, "error_wait_time", 5.0))
+        
         self.initialize_logger(config_class.log_dir)
 
-    def initialize_logger(self, log_dir):
+    def initialize_logger(self, log_dir: str):
+        """初始化日志记录器"""
+        if log_dir and not os.path.exists(log_dir):
+            os.makedirs(log_dir, exist_ok=True)
         logger.add(sink=os.path.join(log_dir, "deepseek.log"), level="WARNING")
 
     def _chat_completion(
-        self, history: List, model=None, temperature=1.0, image_url: str = None
+        self, 
+        history: List[Dict[str, Any]], 
+        model: Optional[str] = None, 
+        temperature: float = 1.0, 
+        image_url: Optional[str] = None
     ) -> str:
-    # def _chat_completion(
-    #     self, history: List, model=None, image_url: str = None
-    # ) -> str:
-        # 如果没有指定模型，使用实例变量self.model；如果self.model也未设置，使用默认模型
-        if model is None:
-            if self.model is None:
-                model = "deepseek-chat"
-            else:
-                model = self.model
+        """
+        核心方法：调用 DeepSeek API (通过 OpenAI SDK)。
+        包含自动重试机制。
+        """
+        target_model = model if model else self.model
 
-        try:
-            response = self.client.chat.completions.create(  # 使用OpenAI的API生成聊天回复
-                model=model, messages=history,
-                temperature=temperature,
-            )
-        except openai._exceptions.APIConnectionError as e:  # 处理API连接错误
-            logger.warning("API Connection Error. Waiting for {} seconds".format(self.error_wait_time))
-            logger.log("Connection Error: ", e)
-            time.sleep(self.error_wait_time)
-            response = openai.chat.completions.create(
-                model=model,
-                messages=history,
-                temperature=temperature,
-            )
-        except openai._exceptions.RateLimitError as e:  # 处理API速率限制错误
-            logger.warning("Rate limit reached. Waiting for 5 seconds")
-            logger.error("Rate Limit Error: ", e)
-            time.sleep(self.error_wait_time)
-            response = openai.chat.completions.create(
-                model=model,
-                messages=history,
-                temperature=temperature,
-            )
-        except openai._exceptions.RateLimitError as e:  # 处理API令牌限制错误
-            logger.warning("Token size limit reached. The recent message is compressed")
-            logger.error("Token size error; will retry with compressed message ", e)
-            # 压缩消息以尝试再次发送
-            # 1. compress the last message
-            history[-1]["content"] = self._token_compression(history)
-            # 2. reduce the number of messages in the history. Minimum is 2
-            if self.history_length > 2:
-                self.history_length -= 1
-            history = history[-self.history_length :]
-            response = openai.chat.completions.create(
-                model=model,
-                messages=history,
-                temperature=temperature,
-            )
+        max_retries = 2  # 相当于原逻辑：失败后重试一次
+        attempt = 0
 
-        # 检查响应是否有效
-        if isinstance(response, tuple):
-            logger.warning("Response is invalid. Waiting for 5 seconds")
+        while attempt < max_retries:
             try:
-                time.sleep(self.error_wait_time)
-                response = openai.chat.completions.create(
-                    model=model,
+                response = self.client.chat.completions.create(
+                    model=target_model,
                     messages=history,
                     temperature=temperature,
                 )
-                if isinstance(response, tuple):
-                    logger.error("Response is invalid. ")
-                    raise Exception("Response is invalid. ")
-            except Exception as e:
-                logger.error("Response is invalid. ", e)
-                raise Exception(
-                    "Response is invalid. The most likely reason is the connection to OpenAI is not stable. "
-                )
 
-        return response.choices[0].message.content
+                # 检查响应有效性 (保留原有的 tuple 检查逻辑，虽然 v1 sdk 通常返回对象)
+                if isinstance(response, tuple):
+                    logger.warning("Response is invalid (tuple). Waiting and retrying...")
+                    raise ValueError("Invalid response type: tuple")
+
+                return response.choices[0].message.content
+
+            except openai.APIConnectionError as e:
+                logger.warning(f"API Connection Error. Waiting {self.error_wait_time}s. ({e})")
+                time.sleep(self.error_wait_time)
+
+            except openai.RateLimitError as e:
+                logger.warning(f"Rate limit reached. Waiting 5s. ({e})")
+                time.sleep(self.error_wait_time)
+
+            except openai.BadRequestError as e:
+                # 处理 Token 超限 (原代码此处捕获的是 RateLimitError，但这通常是 BadRequest)
+                # 检查是否为 Context Length Exceeded
+                if "context_length_exceeded" in str(e) or "token" in str(e).lower():
+                    logger.warning("Token size limit reached. Compressing message...")
+                    
+                    # 1. 压缩最后一条消息
+                    if hasattr(self, "_token_compression"):
+                        history[-1]["content"] = self._token_compression(history)
+                    
+                    # 2. 减少历史记录
+                    if self.history_length > 2:
+                        self.history_length -= 1
+                    history = history[-self.history_length:]
+                    
+                    # 立即重试
+                    continue
+                else:
+                    # 其他 BadRequest 直接抛出
+                    logger.error(f"Bad Request: {e}")
+                    raise e
+
+            except Exception as e:
+                logger.error(f"Unexpected Error: {e}")
+                # 最后一次尝试如果失败，则抛出异常
+                if attempt == max_retries - 1:
+                    raise Exception(f"DeepSeek API failed: {e}")
+                time.sleep(self.error_wait_time)
+
+            attempt += 1
+
+        raise Exception("DeepSeek completion failed after retries.")
 
 
 if __name__ == "__main__":
-    # 假设你有一个和 GPT4ConfigClass 类似的配置类
+    # 模拟配置类
     class MyDeepSeekConfig:
         model = "deepseek-chat"
         api_base = "https://api.deepseek.com"
         log_dir = "logs"
         error_wait_time = 5
+        # 模拟环境变量读取
+        openai_key = os.getenv("DEEPSEEK_API_KEY")
 
+    print("--- Test Start ---")
+    try:
+        local_config = MyDeepSeekConfig()
+        deepseek_api = DeepSeekAPI(local_config)
 
-    local_config_class = MyDeepSeekConfig()
-    claude_api = DeepSeekAPI(local_config_class)
+        # 示例：发送 user 消息
+        conversation_history = [
+            {"role": "user", "content": "你好，DeepSeek，简短介绍一下你自己。"}
+        ]
 
-    # 示例：发送一条简单的 "user" 消息
-    conversation_history = [
-        {"role": "user", "content": "你好，DeepSeek，你能为我做什么？"}
-    ]
+        print("Sending request...")
+        result = deepseek_api._chat_completion(history=conversation_history)
+        print(f"DeepSeek Response: {result}")
 
-    result = claude_api._chat_completion(history=conversation_history)
-    print("DeepSeek 回复:")
-    print(result)
+    except Exception as e:
+        print(f"Test failed (Expected if API Key is missing): {e}")

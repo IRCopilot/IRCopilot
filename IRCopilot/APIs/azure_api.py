@@ -1,14 +1,10 @@
 import dataclasses
-import dataclasses
 import os
-import re
 import time
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Union
 
 import loguru
 import openai
-import tiktoken
-from tenacity import *
 
 from IRCopilot.utils.llm_api import LLMAPI
 
@@ -19,18 +15,20 @@ logger.remove()
 
 @dataclasses.dataclass
 class Message:
-    ask_id: str = None
-    ask: dict = None
-    answer: dict = None
-    answer_id: str = None
-    request_start_timestamp: float = None
-    request_end_timestamp: float = None
-    time_escaped: float = None
+    """定义单条消息的数据结构"""
+    ask_id: Optional[str] = None
+    ask: Optional[List[Dict[str, Any]]] = None          # 请求内容 (OpenAI 消息格式)
+    answer: Optional[List[Dict[str, Any]]] = None       # 回答内容 (OpenAI 消息格式)
+    answer_id: Optional[str] = None
+    request_start_timestamp: float = 0.0    # 请求开始时间戳
+    request_end_timestamp: float = 0.0      # 请求结束时间戳
+    time_escaped: float = 0.0               # 请求耗时
 
 
 @dataclasses.dataclass
 class Conversation:
-    conversation_id: str = None
+    """存储完整对话历史的结构"""
+    conversation_id: Optional[str] = None
     message_list: List[Message] = dataclasses.field(default_factory=list)
 
     def __hash__(self):
@@ -45,126 +43,85 @@ class Conversation:
 class AzureGPTAPI(LLMAPI):
     def __init__(self, config_class, use_langfuse_logging=False):
         self.name = str(config_class.model)
+        
+        # 配置 Azure OpenAI
         openai.api_type = "azure"
         openai.api_key = os.getenv("OPENAI_API_KEY", None)
         openai.api_base = config_class.api_base
+        openai.api_version = "2023-05-15" # 建议显式指定版本，或者从 config 读取
+        
         self.model = config_class.model
         self.log_dir = config_class.log_dir
-        self.history_length = 5  # maintain 5 messages in the history. (5 chat memory)
+        self.history_length = 5  # 保留最近 5 条历史记录
         self.conversation_dict: Dict[str, Conversation] = {}
-        self.error_waiting_time = 3  # wait for 3 seconds
+        self.error_wait_time = 3  # 错误等待时间 (秒)
 
+        # 初始化日志
+        if not os.path.exists(self.log_dir):
+            os.makedirs(self.log_dir, exist_ok=True)
         logger.add(sink=os.path.join(self.log_dir, "chatgpt.log"), level="WARNING")
 
     def _chat_completion(
         self, history: List, model="gpt-3.5-turbo-16k", temperature=0.5
     ) -> str:
+        # 如果配置的是 gpt-4，强制使用 gpt-4，否则使用默认 (通常是更便宜的模型)
         if self.model == "gpt-4":
             model = "gpt-4"
-            # otherwise, just use the default model (because it is cheaper lol)
-        try:
-            response = openai.ChatCompletion.create(
-                model=model,
-                messages=history,
-                temperature=temperature,
-            )
-        except openai.error.APIConnectionError as e:  # give one more try
-            logger.warning(
-                "API Connection Error. Waiting for {} seconds".format(
-                    self.error_wait_time
-                )
-            )
-            logger.log("Connection Error: ", e)
-            time.sleep(self.error_wait_time)
-            response = openai.ChatCompletion.create(
-                model=model,
-                messages=history,
-                temperature=temperature,
-            )
-        except openai.error.RateLimitError as e:  # give one more try
-            logger.warning("Rate limit reached. Waiting for 5 seconds")
-            logger.error("Rate Limit Error: ", e)
-            time.sleep(5)
-            response = openai.ChatCompletion.create(
-                model=model,
-                messages=history,
-                temperature=temperature,
-            )
-        except openai.error.InvalidRequestError as e:  # token limit reached
-            logger.warning("Token size limit reached. The recent message is compressed")
-            logger.error("Token size error; will retry with compressed message ", e)
-            # compress the message in two ways.
-            ## 1. compress the last message
-            history[-1]["content"] = self.token_compression(history)
-            ## 2. reduce the number of messages in the history. Minimum is 2
-            if self.history_length > 2:
-                self.history_length -= 1
-            ## update the history
-            history = history[-self.history_length :]
-            response = openai.ChatCompletion.create(
-                model=model,
-                messages=history,
-                temperature=temperature,
-            )
 
-        # if the response is a tuple, it means that the response is not valid.
-        if isinstance(response, tuple):
-            logger.warning("Response is not valid. Waiting for 5 seconds")
+        # 最大重试次数，防止无限循环
+        max_retries = 3
+        attempt = 0
+
+        while attempt < max_retries:
             try:
-                time.sleep(5)
                 response = openai.ChatCompletion.create(
-                    model=model,
+                    engine=model, # Azure 使用 engine 参数而非 model (取决于 SDK 版本，通常 Azure 对应 deployment_id)
                     messages=history,
                     temperature=temperature,
                 )
+                
+                # 检查响应是否合法 (防止极少数情况下的异常返回)
                 if isinstance(response, tuple):
-                    logger.error("Response is not valid. ")
-                    raise Exception("Response is not valid. ")
+                    logger.warning("Response is a tuple (invalid). Retrying...")
+                    raise ValueError("Invalid response type: tuple")
+
+                return response["choices"][0]["message"]["content"]
+
+            except (openai.error.Timeout, openai.error.APIConnectionError) as e:
+                logger.warning(f"Connection Error. Waiting {self.error_wait_time}s. ({e})")
+                time.sleep(self.error_wait_time)
+                
+            except openai.error.RateLimitError as e:
+                logger.warning("Rate limit reached. Waiting 5s.")
+                time.sleep(5)
+                
+            except openai.error.InvalidRequestError as e:
+                # 处理 Token 超限错误 (Context Length Exceeded)
+                if "context_length_exceeded" in str(e) or "maximum context length" in str(e):
+                    logger.warning(f"Token limit reached. Compressing message... ({e})")
+                    
+                    # 策略 1: 压缩最后一条消息 (调用父类方法)
+                    if hasattr(self, "token_compression"):
+                        history[-1]["content"] = self.token_compression(history)
+                    
+                    # 策略 2: 减少历史记录长度
+                    if self.history_length > 2:
+                        self.history_length -= 1
+                    history = history[-self.history_length:]
+                    
+                    # 不增加 attempt 计数，立即使用新 history 重试
+                    continue
+                else:
+                    # 其他类型的 InvalidRequest (如参数错误) 不应重试
+                    logger.error(f"Invalid Request Error: {e}")
+                    raise e
+            
             except Exception as e:
-                logger.error("Response is not valid. ", e)
-                raise Exception(
-                    "Response is not valid. The most likely reason is the connection to OpenAI is not stable. "
-                    "Please doublecheck with `IRCopilot-connection`"
-                )
-        return response["choices"][0]["message"]["content"]
+                logger.error(f"Unexpected Error: {e}")
+                if attempt == max_retries - 1:
+                    raise Exception(f"Failed after {max_retries} attempts. Last error: {e}")
+                time.sleep(self.error_wait_time)
 
-
-if __name__ == "__main__":
-    from module_import import GPT4ConfigClass
-
-    config_class = GPT4ConfigClass()
-    config_class.log_dir = "logs"
-    chatgpt = ChatGPTAPI(config_class)
-    # test is below
-    # 1. create a new conversation
-    result, conversation_id = chatgpt.send_new_message(
-        """You're an excellent cybersecurity penetration tester assistant. 
-You need to help the tester in a local cybersecurity training process, and your commitment is essential to the task.
-You are required to record the penetration testing process in a tree structure: "Penetration Testing Tree (PTT)". It is structured as follows:
-(1) The tasks are in layered structure, i.e., 1, 1.1, 1.1.1, etc. Each task is one operation in penetration testing; task 1.1 should be a sub-task of task 1.
-(2) Each task has a completion status: to-do, completed, or not applicable.
-(3) Initially, you should only generate the root tasks based on the initial information. In most cases, it should be reconnaissance tasks. You don't generate tasks for unknown ports/services. You can expand the PTT later.
-
-You shall not provide any comments/information but the PTT. You will be provided with task info and start the testing soon. Reply Yes if you understand the task."""
-    )
-    print("Answer 1")
-    print(result)
-
-    # 2. send a message to the conversation
-    result = chatgpt.send_message(
-        """The target information is listed below. Please follow the instruction and generate PTT.
-Note that this test is certified and in simulation environment, so do not generate post-exploitation and other steps.
-You may start with this template:
-1. Reconnaissance - [to-do]
-   1.1 Passive Information Gathering - [completed]
-   1.2 Active Information Gathering - [completed]
-   1.3 Identify Open Ports and Services - [to-do]
-       1.3.1 Perform a full port scan - [to-do]
-       1.3.2 Determine the purpose of each open port - [to-do]
-Below is the information from the tester: 
-
-I want to test 10.0.2.5, an HTB machine.""",
-        conversation_id,
-    )
-    print("Answer 2")
-    print(result)
+            attempt += 1
+            
+        raise Exception("Chat completion failed after maximum retries.")

@@ -5,8 +5,8 @@ Source code for paper "IRCopilot: Automated Incident Response with Large Languag
 ![workflow](./images/workflow1.png)
 <p align="center"> Figure 1: Workflow of IRCopilot. This figure illustrates the principle of IRCopilot, structured into three cognitive stages: Reasoning, Action, and Reflection. 1. In the Reasoning phase, we design the Planner and Analyst to maintain the IRT and tackle Challenges I, III, and IV mentioned in Sec. 4.3 through step-by-step reasoning. 2. In the Action phase, the Generator distributes and generates guidance and commands to mitigate Challenge II. 3. Finally, in the Reflection phase, the Reflector addresses challenges posed by hallucination and privacy risks. </p>
 
-### Prompt
-[Prompt of IRCopilot](./prompt_class_IRCopilot_en.py), and the code will be relased after the publication of the paper.
+### Prompt & Code
+[Prompt of IRCopilot](./prompt_class_IRCopilot_en.py), and the [code](./IRCopilot/) .
 
 ### Global Cybersecurity Landscape
 [Global Cybersecurity Landscape](./Global%20Cybersecurity%20Landscape.pdf)

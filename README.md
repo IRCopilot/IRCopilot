@@ -15,7 +15,7 @@ Source code for paper "IRCopilot: Automated Incident Response with Large Languag
 [Failure Case Analysis](./Case%20Analysis.pdf)
 
 ### IRBench
-#### [benchmark info](./Benchmark_Information/)
+#### [IRBench](./IRBench/)
 Click on the target name to get the sub-task list
 |     | Target Name                                                                                                            | Difficulty | OS      | Number of Tasks | Release Date | Source                                            |
 | --- | ---------------------------------------------------------------------------------------------------------------------- | ---------- | ------- | --------------- | ------------ | ------------------------------------------------- |

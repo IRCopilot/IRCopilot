@@ -20,10 +20,6 @@ Source code for paper "IRCopilot: Benchmarking and Augmenting Large Language Mod
   <em>Figure 1: Workflow of IRCopilot.</em>
 </div>
 
-![workflow](./images/workflow1.png)
-
-<p align="center">
-
 ---
 
 ## 📂 Resources

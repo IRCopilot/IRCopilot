@@ -15,7 +15,7 @@ Source code for paper "IRCopilot: Benchmarking and Augmenting Large Language Mod
 3.  **Reflection**: The *Reflector* addresses challenges posed by hallucination and privacy risks.
 
 <div align="center">
-  <img src="./images/workflow1.png" alt="workflow" width="800">
+  <img src="images/workflow1.png" alt="workflow" width="800">
   <br>
   <em>Figure 1: Workflow of IRCopilot.</em>
 </div>

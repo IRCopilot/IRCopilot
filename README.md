@@ -22,14 +22,15 @@ Source code for paper "IRCopilot: Benchmarking and Augmenting Large Language Mod
 
 ---
 
-### Prompt & Code
-[Prompt of IRCopilot](./prompt_class_IRCopilot_en.py), and the [code](./IRCopilot/) .
+## 📂 Resources
 
-### Global Cybersecurity Landscape
-[Global Cybersecurity Landscape](./Global%20Cybersecurity%20Landscape.pdf)
+- **Prompt**: Available at [Prompt of IRCopilot](./prompt_class_IRCopilot_en.py).  重试  错误原因
+- **Code**: Available at [code](./IRCopilot/).
+- **Paper Materials**:
+  - [Global Cybersecurity Landscape](./Global%20Cybersecurity%20Landscape.pdf)
+  - [Failure Case Analysis](./Case%20Analysis.pdf)
 
-### Failure Case Analysis
-[Failure Case Analysis](./Case%20Analysis.pdf)
+---
 
 ### IRBench
 #### [IRBench](./IRBench/)

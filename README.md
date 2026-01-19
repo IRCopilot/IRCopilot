@@ -102,7 +102,7 @@ Click on the **Target Name** to view the sub-task list.
 
 ## ⚖️ Data Contamination Mitigation
 
-> [**Have LLMs been trained on benchmark tests or writeups?**](./Have%20LLMs%20been%20trained%20on%20benchmark%20tests%20or%20writeups)
+> [**Have LLMs been trained on benchmark tests or writeups?**](./Have%20LLMs%20been%20trained%20on%20benchmark%20tests%20or%20writeups/)
 
 We recognize that cases or writeupsmay be included in LLM training data. To mitigate this bias:
 

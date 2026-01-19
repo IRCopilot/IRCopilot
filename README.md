@@ -113,7 +113,7 @@ Data Contamination Mitigation. IRCopilot is built based on LLMs, recognizing tha
 | **After** | 10           | 0               | 10              | 3             | 10              | | **33** |
 | **Before** | 2           | 12              | 2               | 9             | 2               | | **27** |
 
-#### Comparison of LLM Knowledge Cutoff Dates Against IR Benchmark Release Dates
+#### Detailed Cutoff Check
 |     |                                                                                                                        | **LLM**                   | GPT-4     | Llama3-70b | DeepSeek-V3 | GPT-4o    | Claude-3.5-Sonnet | GPT-o1    |
 | --- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------- | --------- | --------- | ----------- | --------- | ----------------- | --------- |
 |     | **Benchmark**                                                                                                          | **Knowledge Cutoff Date** | (2023-04) | (2023-12) | (2024-07)   | (2023-10) | (2024-04)         | (2023-10) |
@@ -132,6 +132,7 @@ Data Contamination Mitigation. IRCopilot is built based on LLMs, recognizing tha
 |     |                                                                                                                        |                           |           |            |             |           |                   |           |
 |     | (after✓ : predate ×)                                                                                                   | **Total 43:29**           | 10:2      | 10:2      | 0:12        | 10:2      | 3:9               | 10:2      |
 
+*(✓ indicates the benchmark was released AFTER the model's knowledge cutoff.)*
 <!--
 **IRCopilot/IRCopilot** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 

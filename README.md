@@ -107,8 +107,8 @@ Data Contamination Mitigation. IRCopilot is built based on LLMs, recognizing tha
 
 ### Comparison: IRBench Dates vs. LLM Cutoff
 
-| Model | **GPT-4** | **DeepSeek-V3** | **GPT-4o** | **Claude-3.5** | **GPT-o1** |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| Model | **GPT-4** | **DeepSeek-V3** | **GPT-4o** | **Claude-3.5** | **GPT-o1** | | **Total** |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Cutoff** | 2023-04        | 2024-07         | 2023-10         | 2024-04       | 2023-10         | | |
 | **After** | 10           | 0               | 10              | 3             | 10              | | **33** |
 | **Before** | 2           | 12              | 2               | 9             | 2               | | **27** |

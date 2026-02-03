@@ -7,6 +7,8 @@ from typing import Optional, Any
 import dotenv
 import loguru
 
+logger = loguru.logger
+
 module_mapping = {
     # OpenAI GPT-4 系列
     "gpt-4": {
@@ -58,6 +60,11 @@ module_mapping = {
     },
     "o1-2024-12-17": {
         "config_name": "GPTo11217",
+        "module_name": "chatgpt_api",
+        "class_name": "ChatGPTAPI",
+    },
+    "gpt-5.1-2025-11-13": {
+        "config_name": "GPT51_20251113",
         "module_name": "chatgpt_api",
         "class_name": "ChatGPTAPI",
     },
@@ -160,6 +167,10 @@ class GPTo1mini0912(BaseConfig):
 @dataclasses.dataclass
 class GPTo11217(BaseConfig):
     model: str = "o1-2024-12-17"
+
+@dataclasses.dataclass
+class GPT51_20251113(BaseConfig):
+    model: str = "gpt-5.1-2025-11-13"
 
 @dataclasses.dataclass
 class GPT4ALLConfigClass(BaseConfig):

@@ -48,7 +48,7 @@ class ChatGPTAPI(LLMAPI):
     """
 
     def __init__(self, config_class):
-        super().__init__()  # 确保父类被正确初始化
+        super().__init__(config_class)  # 确保父类被正确初始化
         self.name = str(config_class.model)
         
         # 加载环境变量

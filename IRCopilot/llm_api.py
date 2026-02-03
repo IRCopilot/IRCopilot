@@ -60,7 +60,7 @@ class LLMAPI:
 
         # OpenAI 配置初始化
         openai.api_key = config.openai_key
-        openai.proxy = config.proxies
+        openai.proxy = getattr(config, "proxies", None)
         openai.api_base = config.api_base
 
         self.log_dir = config.log_dir

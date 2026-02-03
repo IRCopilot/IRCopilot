@@ -66,18 +66,18 @@ class IRCopilot:
         self.parsing_char_window = 16000
 
         # 2. 模型加载 (动态导入)
-        reasoningAgent = dynamic_import(
+        self.reasoningAgent = dynamic_import(
             reasoning_model, self.log_dir
         )
-        generationAgent= dynamic_import(
+        self.generationAgent = dynamic_import(
             reasoning_model, self.log_dir
         )
-        reflectionAgent = dynamic_import(
-            reasoning_model,self.log_dir
+        self.reflectionAgent = dynamic_import(
+            reasoning_model, self.log_dir
         )
 
         # 3. 提示词与UI组件
-        self.prompts = IRCopilotPrompt
+        self.prompts = IRCopilotPrompt()
         self.console = Console()    # rich.console.Console
         self.spinner = Spinner("line", "Processing")    # rich.spinner
         
@@ -234,7 +234,7 @@ class IRCopilot:
                 self.prompts.task_selection, self.test_reasoning_session_id
             )
             full_reasoning_output = (
-                f"{_reasoning_response}\n"
+                f"{full_reasoning_output}\n"
                 f"{'-' * 100}\n"
                 f"{_task_selection}"
             )
@@ -251,10 +251,10 @@ class IRCopilot:
         # 4. 输出展示
         response = f"{full_reasoning_output}\n{_generation_response}"
         self.console.print("IRCopilot output: ", style="bold #94C9B7")
-        self.console.print(final_response)
-        self.log_conversation("IRCopilot", f"IRCopilot output: {final_response}")
+        self.console.print(response)
+        self.log_conversation("IRCopilot", f"IRCopilot output: {response}")
 
-    def initialize(self, previous_session_ids: Optional[Dict] = None):
+    def initialize(self, previous_session_ids: Optional[Dict] = None, run_init_prompts: bool = True):
         """
         初始化核心会话（生成、推理、反思），支持加载旧会话或创建新会话。
         """
@@ -316,7 +316,8 @@ class IRCopilot:
                 logger.error(e)
 
         self.console.print("- IRCopilot Agents Initialized.", style="bold #94C9B7")
-        self._feed_init_prompts()
+        if run_init_prompts:
+            self._feed_init_prompts()
 
     def reasoning_handler(self, text: str) -> Tuple[str, str]:
         """处理推理请求：更新 IRT 并选择任务。"""
@@ -347,7 +348,7 @@ class IRCopilot:
         return full_response, decision
 
     def test_generation_handler(self, text: str) -> str:
-       """处理生成请求。"""
+        """处理生成请求。"""
         # input_handler: more/tdo
         response = self.generationAgent.send_message(
             text, self.test_generation_session_id
@@ -385,7 +386,7 @@ class IRCopilot:
             with self.console.status("[bold #94C9B7] IRCopilot Thinking...") as status:
                 # todo:RAG
                 local_task_response = self.test_generation_handler(
-                    f"{self.prompts.local_task_prefix}{user_input}
+                    f"{self.prompts.local_task_prefix}{user_input}"
                 )
 
             # (3) 显示结果
@@ -407,7 +408,7 @@ class IRCopilot:
             with self.console.status("[bold #94C9B7] IRCopilot Thinking...") as status:
                 # todo:RAG
                 local_task_response = self.test_generation_handler(
-                    f"{self.prompts.local_task_brainstorm}{user_input}
+                    f"{self.prompts.local_task_brainstorm}{user_input}"
                 )
 
             # (3) 显示结果
@@ -423,7 +424,7 @@ class IRCopilot:
 
         return local_task_response
     
-    def _ui_interaction_wrapper(self, prompt_msg: str, agent_func, *args) -> str:
+    def _ui_interaction_wrapper(self, prompt_msg: str, agent_func, *args) -> Tuple[str, str]:
         """封装通用的 UI 交互流程 (提示->输入->思考->打印)。"""
         self.console.print(prompt_msg)
         self.log_conversation("IRCopilot", prompt_msg)

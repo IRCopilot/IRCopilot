@@ -10,7 +10,7 @@ from uuid import uuid1
 import loguru
 import openai
 import tiktoken
-from tenacity import retry, stop_after_attempt
+from tenacity import retry, stop_after_attempt, wait_fixed
 
 from IRCopilot.config.chat_config import ChatGPTConfig
 
@@ -64,6 +64,9 @@ class LLMAPI:
         openai.api_base = config.api_base
 
         self.log_dir = config.log_dir
+        self.request_timeout = float(getattr(config, "request_timeout", 60))
+        self.retry_attempts = int(getattr(config, "retry_attempts", 3))
+        self.retry_wait = float(getattr(config, "retry_wait", 2))
         self.history_length = 5  # 保留最近 5 轮对话记忆
         self.conversation_dict: Dict[str, Conversation] = {}
 
@@ -158,6 +161,7 @@ class LLMAPI:
                 model=self.model,
                 messages=history,
                 temperature=temperature,
+                request_timeout=self.request_timeout,
                 **kwargs
             )
         except openai.error.APIConnectionError as e:
@@ -165,7 +169,11 @@ class LLMAPI:
             time.sleep(self.config.error_wait_time)
             # Retry once
             response = openai.ChatCompletion.create(
-                model=self.model, messages=history, temperature=temperature, **kwargs
+                model=self.model,
+                messages=history,
+                temperature=temperature,
+                request_timeout=self.request_timeout,
+                **kwargs,
             )
 
         except openai.error.RateLimitError as e:
@@ -173,7 +181,11 @@ class LLMAPI:
             time.sleep(self.config.error_wait_time)
             # Retry once
             response = openai.ChatCompletion.create(
-                model=self.model, messages=history, temperature=temperature, **kwargs
+                model=self.model,
+                messages=history,
+                temperature=temperature,
+                request_timeout=self.request_timeout,
+                **kwargs,
             )
 
         except openai.error.InvalidRequestError as e:
@@ -194,7 +206,11 @@ class LLMAPI:
             history = history[-self.history_length:]
 
             response = openai.ChatCompletion.create(
-                model=self.model, messages=history, temperature=temperature, **kwargs
+                model=self.model,
+                messages=history,
+                temperature=temperature,
+                request_timeout=self.request_timeout,
+                **kwargs,
             )
 
         # 检查非法响应 (针对某些代理或旧版接口可能返回 tuple 的情况)
@@ -202,7 +218,11 @@ class LLMAPI:
             logger.warning("Received invalid tuple response. Retrying in 5s...")
             time.sleep(5)
             response = openai.ChatCompletion.create(
-                model=self.model, messages=history, temperature=temperature, **kwargs
+                model=self.model,
+                messages=history,
+                temperature=temperature,
+                request_timeout=self.request_timeout,
+                **kwargs,
             )
             if isinstance(response, tuple):
                 raise Exception("Response is strictly invalid (tuple received). Check OpenAI connection stability.")
@@ -234,7 +254,11 @@ class LLMAPI:
         data = self._build_user_message(message, image_url)
 
         # 执行请求
+        print("Requesting...")
+        request_start = time.time()
         response_text = self._chat_completion(data)
+        request_end = time.time()
+        print(f"Request finished in {request_end - request_start:.2f}s")
 
         # 记录数据
         msg_obj = Message(
@@ -256,7 +280,7 @@ class LLMAPI:
 
         return response_text, conversation_id
 
-    @retry(stop=stop_after_attempt(4))
+    @retry(stop=stop_after_attempt(4), wait=wait_fixed(2))
     def send_message(self, message: str, conversation_id: str, image_url: str = None, debug_mode: bool = False) -> str:
         """
         在现有对话中发送消息（包含上下文历史）。
@@ -291,16 +315,28 @@ class LLMAPI:
         # Debug 信息
         num_tokens = self._count_token(chat_history)
 
-        # 4. 发送请求
+        # 4. Send request
         try:
+            print("Requesting...")
+            request_start = time.time()
             response_text = self._chat_completion(chat_history)
+            request_end = time.time()
+            print(f"Request finished in {request_end - request_start:.2f}s")
         except getattr(openai, "BadRequestError", Exception) as e:
+            print(f"Request failed: {e}")
             # 兼容处理：如果安装了新版 SDK 可能会抛出 BadRequestError
             if "context_length_exceeded" in str(e):
                 chat_history = self._token_compression(chat_history)
+                print("Requesting...")
+                request_start = time.time()
                 response_text = self._chat_completion(chat_history)
+                request_end = time.time()
+                print(f"Request finished in {request_end - request_start:.2f}s")
             else:
                 raise e
+        except Exception as e:
+            print(f"Request failed: {e}")
+            raise
 
         # 5. 更新会话记录
         msg_obj.answer = [{"role": "assistant", "content": response_text}]

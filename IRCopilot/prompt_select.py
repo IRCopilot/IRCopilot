@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import asyncio
+import threading
 from typing import List, Tuple, Any, Optional, Union
 
 from prompt_toolkit.application import Application
@@ -32,44 +33,72 @@ def prompt_select(
         title: str = "",
         values: Optional[List[Tuple[Any, Union[str, HTML]]]] = None,
         style: Optional[str] = None,
-        async_: bool = False
+        async_: bool = False,
+        fallback_seconds: Optional[float] = None,
+        fallback_default: Optional[Any] = None,
 ) -> Any:
     """
-    创建一个带有单选列表的交互式用户界面。
-
-    Args:
-        title: 界面顶部显示的标题。
-        values: 选项列表，格式为 [(value, label), ...]。
-        style: 应用于界面的样式类或字典。
-        async_: 是否异步运行。
-
-    Returns:
-        Any: 用户选中的值。如果 async_ 为 True，返回 Future 对象。
+    Create a single-choice prompt.
     """
     values = values or []
     bindings = KeyBindings()
 
     @bindings.add("c-z")
     def _exit(event):
-        """Ctrl+Z 退出程序"""
+        """Ctrl+Z ????"""
         event.app.exit()
 
     @bindings.add("c-right")
     def _submit(event):
-        """Ctrl+Right 确认选择并返回"""
+        """Ctrl+Right ???????"""
+        event.app.exit(result=radio_list.current_value)
+
+    @bindings.add("enter")
+    def _submit_enter(event):
+        """Enter confirm selection and return"""
+        event.app.exit(result=radio_list.current_value)
+
+    @bindings.add("c-m")
+    def _submit_ctrl_m(event):
+        """Ctrl+M (Enter) confirm selection and return"""
+        event.app.exit(result=radio_list.current_value)
+
+    @bindings.add("c-j")
+    def _submit_ctrl_j(event):
+        """Ctrl+J confirm selection and return"""
+        event.app.exit(result=radio_list.current_value)
+
+    @bindings.add("space")
+    def _submit_space(event):
+        """Space confirm selection and return"""
         event.app.exit(result=radio_list.current_value)
 
     radio_list = RadioList(values)
 
     application = Application(
-        layout=Layout(HSplit([Label(title), radio_list])),
-        key_bindings=merge_key_bindings([load_key_bindings(), bindings]),
+        layout=Layout(HSplit([Label(title), radio_list]), focused_element=radio_list),
+        key_bindings=merge_key_bindings([bindings, load_key_bindings()]),
         mouse_support=True,
         style=style,
         full_screen=False,
     )
 
-    return application.run_async() if async_ else application.run()
+    if not async_:
+        if fallback_seconds and fallback_seconds > 0:
+            def _auto_submit():
+                default_value = fallback_default if fallback_default is not None else radio_list.current_value
+                try:
+                    application.exit(result=default_value)
+                except Exception:
+                    pass
+            try:
+                application.call_later(fallback_seconds, _auto_submit)
+            except Exception:
+                timer = threading.Timer(fallback_seconds, _auto_submit)
+                timer.daemon = True
+                timer.start()
+        return application.run()
+    return application.run_async()
 
 
 def prompt_ask(text: str, multiline: bool = True) -> str:

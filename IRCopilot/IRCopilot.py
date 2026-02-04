@@ -51,8 +51,7 @@ class IRCopilot:
     def __init__(
         self,
         log_dir="logs",
-        reasoning_model="gpt-4-turbo",
-        parsing_model="gpt-4-turbo",
+        llm_model="gpt-5.1-2025-11-13",
         useAPI=True,
     ):
         # 1. 基础配置
@@ -66,14 +65,14 @@ class IRCopilot:
         self.parsing_char_window = 16000
 
         # 2. 模型加载 (动态导入)
-        self.reasoningAgent = dynamic_import(
-            reasoning_model, self.log_dir
+        self.planner_agent = dynamic_import(
+            llm_model, self.log_dir
         )
-        self.generationAgent = dynamic_import(
-            reasoning_model, self.log_dir
+        self.generator_agent = dynamic_import(
+            llm_model, self.log_dir
         )
-        self.reflectionAgent = dynamic_import(
-            reasoning_model, self.log_dir
+        self.reflector_agent = dynamic_import(
+            llm_model, self.log_dir
         )
 
         # 3. 提示词与UI组件
@@ -82,40 +81,40 @@ class IRCopilot:
         self.spinner = Spinner("line", "Processing")    # rich.spinner
         
         # 4. 会话状态初始化
-        self.test_generation_session_id: Optional[str] = None
-        self.test_reasoning_session_id: Optional[str] = None
-        self.reflection_session_id: Optional[str] = None
+        self.generator_session_id: Optional[str] = None
+        self.planner_session_id: Optional[str] = None
+        self.reflector_session_id: Optional[str] = None
 
         self.chat_count = 0
-        self.step_reasoning_response = None     # Planner 的每一步响应
-        self.decision = None       # Planner的决策结果
+        self.planner_response = None     # Planner 的每一步响应
+        self.selected_task = None       # Planner的决策结果
 
         # 5. 历史记录初始化
         self.history: Dict[str, List[Tuple[float, str]]] = {
             "user": [],
             "IRCopilot": [],
-            "reasoning": [],
-            "generation": [],
-            "reflection": [],
+            "planner": [],
+            "generator": [],
+            "reflector": [],
             "exception": [],
         }
         self.action_history: List[str] = []     # 存储用户的操作
         self.irt_and_task_history: List[str] = []       # 存储系统的响应
         
         # 6. 打印欢迎信息
-        self._print_welcome_info(reasoning_model, useAPI)
+        self._print_welcome_info(llm_model, useAPI)
 
 
-    def _print_welcome_info(self, reasoning_model: str, useAPI: bool):
+    def _print_welcome_info(self, llm_model: str, useAPI: bool):
         """打印初始化信息"""
         self.console.print("IRCopilot, design for incident response.", style="bold #94C9B7")
         self.console.print("Settings : ")
         try:
             # 尝试获取模型名称，处理不同类型的 Agent 对象
-            model_name = getattr(self.reasoningAgent, 'name', reasoning_model)
-            self.console.print(f" - reasoning model: {model_name}", style="bold #94C9B7")
+            model_name = getattr(self.planner_agent, 'name', llm_model)
+            self.console.print(f" - llm model: {model_name}", style="bold #94C9B7")
         except AttributeError:
-            self.console.print(f" - reasoning model: {reasoning_model}", style="bold #94C9B7")
+            self.console.print(f" - llm model: {llm_model}", style="bold #94C9B7")
             
         self.console.print(f" - use API: {useAPI}", style="bold #94C9B7")
         self.console.print(f" - log directory: {self.log_dir}", style="bold #94C9B7") 
@@ -138,8 +137,8 @@ class IRCopilot:
         input("Press Enter to continue...")
 
         # 刷新 Agent
-        if hasattr(self.reflectionAgent, 'refresh'): self.reflectionAgent.refresh()
-        if hasattr(self.reasoningAgent, 'refresh'): self.reasoningAgent.refresh()
+        if hasattr(self.reflector_agent, 'refresh'): self.reflector_agent.refresh()
+        if hasattr(self.planner_agent, 'refresh'): self.planner_agent.refresh()
         
         msg = "Session refreshed. If you receive the same session refresh request, please refresh the ChatGPT page and paste the new curl request again."
         self.console.print(msg, style="bold green")
@@ -161,9 +160,9 @@ class IRCopilot:
         save_path.parent.mkdir(parents=True, exist_ok=True)
 
         session_data = {
-            "reasoning": self.test_reasoning_session_id,
-            "test_generation": self.test_generation_session_id,
-            "reflection": self.reflection_session_id,
+            "planner": self.planner_session_id,
+            "generator": self.generator_session_id,
+            "reflector": self.reflector_session_id,
             "task_log": self.task_log,
         }
 
@@ -227,14 +226,14 @@ class IRCopilot:
             "[bold #94C9B7] Constructing Initial Incident Response Tree..."
         ) as status:
             # 推理会话处理 prefixed_desc
-            full_reasoning_output = self.reasoningAgent.send_message(
-                prefixed_desc, self.test_reasoning_session_id
+            planner_output = self.planner_agent.send_message(
+                prefixed_desc, self.planner_session_id
             )
-            _task_selection = self.reasoningAgent.send_message(
-                self.prompts.task_selection, self.test_reasoning_session_id
+            _task_selection = self.planner_agent.send_message(
+                self.prompts.task_selection, self.planner_session_id
             )
-            full_reasoning_output = (
-                f"{full_reasoning_output}\n"
+            planner_output = (
+                f"{planner_output}\n"
                 f"{'-' * 100}\n"
                 f"{_task_selection}"
             )
@@ -242,14 +241,14 @@ class IRCopilot:
         # 3. 生成阶段：基于推理结果生成指令
         # 注意，生成会话不用于任务初始化。
         with self.console.status("[bold #94C9B7] Generating Initial Task") as status:
-            _generation_response = self.generationAgent.send_message(
-                f"{self.prompts.todo_to_command}{full_reasoning_output}",
-                self.test_generation_session_id,
+            _generation_response = self.generator_agent.send_message(
+                f"{self.prompts.todo_to_command}{planner_output}",
+                self.generator_session_id,
             )
             # todo RAG
 
         # 4. 输出展示
-        response = f"{full_reasoning_output}\n{_generation_response}"
+        response = f"{planner_output}\n{_generation_response}"
         self.console.print("IRCopilot output: ", style="bold #94C9B7")
         self.console.print(response)
         self.log_conversation("IRCopilot", f"IRCopilot output: {response}")
@@ -260,15 +259,15 @@ class IRCopilot:
         """
         # 定义三个会话：生成会话、推理会话和解析会话
         if previous_session_ids is not None and self.useAPI is False:
-            self.test_generation_session_id = previous_session_ids.get("test_generation", None)
-            self.test_reasoning_session_id = previous_session_ids.get("reasoning", None)
-            self.reflection_session_id = previous_session_ids.get("reflection", None)
+            self.generator_session_id = previous_session_ids.get("generator", None) or previous_session_ids.get("test_generation", None)
+            self.planner_session_id = previous_session_ids.get("planner", None)
+            self.reflector_session_id = previous_session_ids.get("reflector", None) or previous_session_ids.get("reflection", None)
 
             # 调试输出会话的ID
             print(f"Previous session ids: {str(previous_session_ids)}")
-            print(f"Generation session id: {str(self.test_generation_session_id)}")
-            print(f"Reasoning session id: {str(self.test_reasoning_session_id)}")
-            print(f"Reflection session id: {str(self.reflection_session_id)}")
+            print(f"Generator session id: {str(self.generator_session_id)}")
+            print(f"Planner session id: {str(self.planner_session_id)}")
+            print(f"Reflector session id: {str(self.reflector_session_id)}")
 
             print("-----------------")
 
@@ -278,7 +277,7 @@ class IRCopilot:
             print("You may use 'discuss' to remind the task.")
 
             # 验证会话有效性
-            if any(sid is None for sid in [self.test_generation_session_id, self.test_reasoning_session_id, self.reflection_session_id]):
+            if any(sid is None for sid in [self.generator_session_id, self.planner_session_id, self.reflector_session_id]):
                 self.console.print("[bold red] Error: Previous session IDs are incomplete/invalid. Starting new sessions.")
                 self.initialize(previous_session_ids=None) # 递归调用以重新初始化
             return
@@ -288,20 +287,20 @@ class IRCopilot:
         ) as status:
             try:
                 # 启动生成会话
-                _, self.test_generation_session_id = \
-                    self.generationAgent.send_new_message(self.prompts.Generator_init)
-                self.console.print(f"Generation session : {self.test_generation_session_id}", style="bold #94C9B7")
+                _, self.generator_session_id = \
+                    self.generator_agent.send_new_message(self.prompts.Generator_init)
+                self.console.print(f"Generator session : {self.generator_session_id}", style="bold #94C9B7")
 
                 # 启动推理会话
-                _, self.test_reasoning_session_id = \
-                    self.reasoningAgent.send_new_message(self.prompts.Planner_init)
-                self.console.print(f"Reasoning session : {self.test_reasoning_session_id}", style="bold #94C9B7")
+                _, self.planner_session_id = \
+                    self.planner_agent.send_new_message(self.prompts.Planner_init)
+                self.console.print(f"Planner session : {self.planner_session_id}", style="bold #94C9B7")
 
                 # 启动反思会话 (通常包含一个 bad example 的预热)
-                _, self.reflection_session_id = \
-                    self.reflectionAgent.send_new_message(self.prompts.Reflector_init)
-                self.reflectionAgent.send_message(self.prompts.bad_example, self.reflection_session_id)
-                self.console.print(f"Reflection session: {self.reflection_session_id}", style="bold #94C9B7")
+                _, self.reflector_session_id = \
+                    self.reflector_agent.send_new_message(self.prompts.Reflector_init)
+                self.reflector_agent.send_message(self.prompts.bad_example, self.reflector_session_id)
+                self.console.print(f"Reflector session: {self.reflector_session_id}", style="bold #94C9B7")
             
             except AttributeError as ae:
                 self.console.print(f"[bold red] AttributeError: {ae} - 请检查 Agent 是否正确初始化。", style="bold red")
@@ -319,42 +318,42 @@ class IRCopilot:
         if run_init_prompts:
             self._feed_init_prompts()
 
-    def reasoning_handler(self, text: str) -> Tuple[str, str]:
+    def planner_handler(self, text: str) -> Tuple[str, str]:
         """处理推理请求：更新 IRT 并选择任务。"""
         # if len(text) > self.parsing_char_window:
         #     # 如果文本长度超过解析字符窗口，调用input_parsing_handler()处理文本
         #     text = self.input_parsing_handler(text)
 
         # 1. 更新IRT
-        _updated_irt = self.reasoningAgent.send_message(
-            f"{self.prompts.process_results}{text}", self.test_reasoning_session_id
+        _updated_irt = self.planner_agent.send_message(
+            f"{self.prompts.process_results}{text}", self.planner_session_id
         )
 
         # 2. 验证IRT是否正确，反思并修订IRT
 
         # 3. 选择最优任务
-        decision = self.reasoningAgent.send_message(
-            self.prompts.task_selection, self.test_reasoning_session_id
+        selected_task = self.planner_agent.send_message(
+            self.prompts.task_selection, self.planner_session_id
         )
 
         # 4. 组合结果
         full_response = (
             f"{_updated_irt}\n"
             f"{'-' * 100}\n"
-            f"{decision}"
+            f"{selected_task}"
         )
 
-        self.log_conversation("reasoning", full_response)
-        return full_response, decision
+        self.log_conversation("planner", full_response)
+        return full_response, selected_task
 
-    def test_generation_handler(self, text: str) -> str:
+    def generator_handler(self, text: str) -> str:
         """处理生成请求。"""
         # input_handler: more/tdo
-        response = self.generationAgent.send_message(
-            text, self.test_generation_session_id
+        response = self.generator_agent.send_message(
+            text, self.generator_session_id
         )
         # 记录对话
-        self.log_conversation("generation", response)
+        self.log_conversation("generator", response)
         return response
     
 
@@ -385,7 +384,7 @@ class IRCopilot:
             # (2) 将信息传递给生成会话
             with self.console.status("[bold #94C9B7] IRCopilot Thinking...") as status:
                 # todo:RAG
-                local_task_response = self.test_generation_handler(
+                local_task_response = self.generator_handler(
                     f"{self.prompts.local_task_prefix}{user_input}"
                 )
 
@@ -407,7 +406,7 @@ class IRCopilot:
             # (2) 将信息传递给生成会话
             with self.console.status("[bold #94C9B7] IRCopilot Thinking...") as status:
                 # todo:RAG
-                local_task_response = self.test_generation_handler(
+                local_task_response = self.generator_handler(
                     f"{self.prompts.local_task_brainstorm}{user_input}"
                 )
 
@@ -434,7 +433,7 @@ class IRCopilot:
 
         response = ""
         with self.console.status("[bold #94C9B7] IRCopilot Thinking...") as status:
-            # 这里的 agent_func 可以是 self.reasoningAgent.send_message 或其他 handler
+            # 这里的 agent_func 可以是 self.planner_agent.send_message 或其他 handler
             response = agent_func(user_input, *args)
         
         return response, user_input
@@ -465,8 +464,8 @@ class IRCopilot:
             self.log_conversation("user", thoughts)
 
             with self.console.status("[bold #94C9B7] IRCopilot thinking...") as status:
-                response = self.reasoningAgent.send_message(thoughts, self.test_reasoning_session_id)
-                self.step_reasoning_response = response
+                response = self.planner_agent.send_message(thoughts, self.planner_session_id)
+                self.planner_response = response
 
             self.console.print("IRCopilot:\n", style="bold #94C9B7")
             self.console.print(response + "\n", style="green")
@@ -485,8 +484,8 @@ class IRCopilot:
                 #     user_input, source=options[int(source)]
                 # )
                 # (2) 将 解析后的信息 传递给 推理会话，获取基于 解析结果的推理响应。
-                response, self.decision = self.reasoning_handler(user_input)
-                self.step_reasoning_response = response
+                response, self.selected_task = self.planner_handler(user_input)
+                self.planner_response = response
 
             # (3) 显示推理响应
             self.console.print(f"Based on the analysis, the following tasks are recommended: {response}\n", style="bold green")
@@ -500,19 +499,19 @@ class IRCopilot:
             self.action_history.append(user_input)  # 存储用户操作
 
             with self.console.status("[bold #94C9B7] IRCopilot Thinking...") as status:
-                _updated_irt = self.reasoningAgent.send_message(
-                    f"{self.prompts.analysis_results}{user_input}", self.test_reasoning_session_id
+                _updated_irt = self.planner_agent.send_message(
+                    f"{self.prompts.analysis_results}{user_input}", self.planner_session_id
                 )
 
-                decision = self.reasoningAgent.send_message(
-                    self.prompts.task_selection, self.test_reasoning_session_id
+                selected_task = self.planner_agent.send_message(
+                    self.prompts.task_selection, self.planner_session_id
                 )
 
-                response = f"{_updated_irt}\n{'-'*100}\n{decision}"
+                response = f"{_updated_irt}\n{'-'*100}\n{selected_task}"
                 self.irt_and_task_history.append(response)  # 存储系统响应
 
                 # 可以再传递给generate
-                self.step_reasoning_response = response
+                self.planner_response = response
 
             # 打印结果
             self.console.print("IRCopilot:\n", style="bold #94C9B7")
@@ -527,19 +526,19 @@ class IRCopilot:
             self.action_history.append(user_input)  # 存储用户操作
 
             with self.console.status("[bold #94C9B7] IRCopilot Thinking...") as status:
-                _updated_irt = self.reasoningAgent.send_message(
-                    f"{self.prompts.analysis_files}{user_input}", self.test_reasoning_session_id
+                _updated_irt = self.planner_agent.send_message(
+                    f"{self.prompts.analysis_files}{user_input}", self.planner_session_id
                 )
 
-                decision = self.reasoningAgent.send_message(
-                    self.prompts.task_selection, self.test_reasoning_session_id
+                selected_task = self.planner_agent.send_message(
+                    self.prompts.task_selection, self.planner_session_id
                 )
 
-                response = f"{_updated_irt}\n{'-'*100}\n{decision}"
+                response = f"{_updated_irt}\n{'-'*100}\n{selected_task}"
                 self.irt_and_task_history.append(response)  # 存储系统响应
 
                 # 可以再传递给generate
-                self.step_reasoning_response = response
+                self.planner_response = response
 
             # (3) 打印结果
             self.console.print("IRCopilot:\n", style="bold #94C9B7")
@@ -556,11 +555,11 @@ class IRCopilot:
 
             # (2) 将信息传递给推理会话
             with self.console.status("[bold #94C9B7] IRCopilot Thinking...") as status:
-                response,self.decision = self.reasoning_handler(f"{self.prompts.discussion}{user_input}")
+                response,self.selected_task = self.planner_handler(f"{self.prompts.discussion}{user_input}")
                 # 测试人员提供了以下思考供您参考，请给出您的意见，并在必要时更新任务。+ user_input
 
                 # 可以再传递给generate
-                self.step_reasoning_response = response
+                self.planner_response = response
 
             # (3) 打印结果
             self.console.print("IRCopilot:\n", style="bold #94C9B7")
@@ -577,14 +576,14 @@ class IRCopilot:
             # (1) 请求推理会话分析当前情况并列出顶级子任务
             with self.console.status("[bold #94C9B7] IRCopilot Thinking...") as status:
                 # 根据要求分析任务并再次生成任务树
-                reasoning_resp, self.decision = self.reasoning_handler(f"{self.prompts.regenerate}{user_input}")
+                planner_resp, self.selected_task = self.planner_handler(f"{self.prompts.regenerate}{user_input}")
 
                 # 重新生成指导
-                message = f"{self.prompts.todo_to_command}\n{reasoning_resp}"
-                generation_resp = self.test_generation_handler(message)
+                message = f"{self.prompts.todo_to_command}\n{planner_resp}"
+                generation_resp = self.generator_handler(message)
 
             # (3) 打印结果
-            response = reasoning_resp
+            response = planner_resp
             self.console.print(f"Based on the analysis, the following tasks are recommended: \n{response}\n",
                                style="bold green")  # reason->任务树
 
@@ -606,15 +605,15 @@ class IRCopilot:
             self.log_conversation("user", thoughts)
 
             with self.console.status("[bold #94C9B7] IRCopilot thinking...") as status:
-                response = self.generationAgent.send_message(thoughts, self.test_generation_session_id)
-                self.step_generation_response = response
+                response = self.generator_agent.send_message(thoughts, self.generator_session_id)
+                self.generator_response = response
 
             self.console.print("IRCopilot:\n", style="bold #94C9B7")
             self.console.print(f"{response}\n", style="green")
             self.log_conversation("IRCopilot", response)
 
         elif request_option == "generate_commands":
-            if not hasattr(self, "step_reasoning_response"):
+            if not hasattr(self, "planner_response"):
                 msg = "You have not initialized the task yet. Please perform the basic testing following `next` option."
                 self.console.print(msg, style="bold red")
                 self.log_conversation("IRCopilot", msg)
@@ -630,26 +629,26 @@ class IRCopilot:
                 # todo:# 可以在此处集成 RAG 或 Extractor
                 # # 提取推理结果的关键词
                 # question = self.extractorAgent.send_message(
-                #     self.prompts.extract_keyword + self.step_reasoning_response, self.extractor_session_id
+                #     self.prompts.extract_keyword + self.planner_response, self.extractor_session_id
                 # )
                 # # 关键词->RAG->prompt
                 # rag_prompt = rag2prompt(question=question)
                 # # 根绝RAG检索的背景生成任务、指导、或是命令
 
-                self.step_generation_response = self.test_generation_handler(
-                    self.step_reasoning_response
+                self.generator_response = self.generator_handler(
+                    self.planner_response
                 )
 
                 # 对生成会话进行评估反思循环？
                 # generation_response = self.reflect_cmd(generation_response)
 
             # 打印
-            self.console.print(f"Below are the further details.\n{self.step_generation_response}\n",style="bold green")
-            response = self.step_generation_response    # 生成会话的结果
+            self.console.print(f"Below are the further details.\n{self.generator_response}\n",style="bold green")
+            response = self.generator_response    # 生成会话的结果
             self.log_conversation("IRCopilot", response)
 
         elif request_option == "sub-task":
-            if not hasattr(self, "step_generation_response"):
+            if not hasattr(self, "generator_response"):
                 msg = "You haven't initialized the generator yet. Please perform the basic testing following `generate` option."
                 self.console.print(msg, style="bold red")
                 self.log_conversation("IRCopilot", msg)
@@ -657,7 +656,7 @@ class IRCopilot:
 
             while True:
                 # 触发子任务生成的逻辑
-                _local_init_response = self.test_generation_handler(
+                _local_init_response = self.generator_handler(
                     self.prompts.local_task_init  # 生成会话 忽略之前的信息
                 )
                 local_resp = self.local_input_handler()
@@ -674,8 +673,8 @@ class IRCopilot:
             self.log_conversation("user", thoughts)
 
             with self.console.status("[bold #94C9B7] IRCopilot thinking...") as status:
-                response = self.reflectionAgent.send_message(thoughts, self.reflection_session_id)
-                self.step_reflector_response = response
+                response = self.reflector_agent.send_message(thoughts, self.reflector_session_id)
+                self.reflector_response = response
 
             self.console.print("IRCopilot:\n", style="bold #94C9B7")
             self.console.print(f"{response}\n", style="green")
@@ -714,8 +713,8 @@ class IRCopilot:
                         f"Results of the incident response steps: \n{recent_actions}\n\n"
                         f"Analyst's thoughts or your previous reflections (can be empty): \n{thoughts}"
                     )
-                    response = self.reflectionAgent.send_message(reflect_input, self.reflection_session_id)
-                    self.step_reasoning_response = response
+                    response = self.reflector_agent.send_message(reflect_input, self.reflector_session_id)
+                    self.planner_response = response
 
                 self.console.print("IRCopilot:\n", style="bold #94C9B7")
                 self.console.print(f"{response}\n", style="green")

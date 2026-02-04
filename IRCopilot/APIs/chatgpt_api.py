@@ -62,6 +62,9 @@ class ChatGPTAPI(LLMAPI):
         self.history_length = 5
         self.conversation_dict: Dict[str, Conversation] = {}
         self.error_wait_time = float(getattr(config_class, "error_wait_time", 2.0))
+        self.request_timeout = float(getattr(config_class, "request_timeout", 60))
+        self.retry_attempts = int(getattr(config_class, "retry_attempts", 3))
+        self.retry_wait = float(getattr(config_class, "retry_wait", 2))
         
         self.initialize_logger(config_class.log_dir)
 
@@ -86,7 +89,7 @@ class ChatGPTAPI(LLMAPI):
         target_model = model if model else self.model
 
         # 最大重试次数
-        max_retries = 3
+        max_retries = self.retry_attempts
         current_attempt = 0
 
         while current_attempt < max_retries:
@@ -95,6 +98,7 @@ class ChatGPTAPI(LLMAPI):
                     model=target_model,
                     messages=history,
                     temperature=temperature,
+                    timeout=self.request_timeout,
                 )
                 
                 # 检查响应有效性 (OpenAI SDK v1 返回对象，非 tuple)
@@ -110,6 +114,10 @@ class ChatGPTAPI(LLMAPI):
             except openai.RateLimitError as e:
                 logger.warning(f"Rate limit reached. Waiting {self.error_wait_time}s. Detail: {e}")
                 time.sleep(self.error_wait_time)
+
+            except getattr(openai, "APITimeoutError", Exception) as e:
+                logger.warning(f"Request timeout. Waiting {self.retry_wait}s. Detail: {e}")
+                time.sleep(self.retry_wait)
                 
             except openai.BadRequestError as e:
                 # 专门处理 Context Length Exceeded (Token 超限)

@@ -149,7 +149,7 @@ if __name__ == "__main__":
         log_dir = "logs"
         error_wait_time = 2
         # 模拟从 BaseConfig 继承来的字段
-        openai_key = os.getenv("ANTHROPIC_API_KEY", "sk-ant-xxx") 
+        openai_key = os.getenv("ANTHROPIC_API_KEY")
 
     print("--- Test Start ---")
     try:
